@@ -1,0 +1,47 @@
+name: Game Documentation
+on:
+  push:
+    branches: 
+    - master
+
+permissions:
+  contents: read
+  pages: write
+  deployments: write
+  id-token: write
+
+jobs:
+  docs:
+    runs-on: windows-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check
+        shell: cmd
+        run: where git & where choco
+
+      - name: Checkout action
+        uses: actions/checkout@v3.5.3
+        with:
+          submodules: 'recursive'
+
+      - name: Installing Doxygen
+        run: choco install doxygen.install
+
+      - name: Running Doxygen
+        run: doxygen devops_data\Doxyfile
+
+      - name: Upload GitHub Pages artifact action
+        uses: actions/upload-pages-artifact@v1.0.9
+        with:
+          path: Documentation\html
+
+      - name: Configure GitHub Pages action
+        uses: actions/configure-pages@v3.0.6
+
+      - name: Deploy GitHub Pages site action
+        id: deployment
+        uses: actions/deploy-pages@v2.0.2
