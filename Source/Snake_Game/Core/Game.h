@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Core/CoreTypes.h"
 
-namespace Snake
+namespace SnakeGame
 {
 
 class Grid;
@@ -15,6 +15,10 @@ class Game
 public:
     Game(const Settings& setiings);
 
+    /**
+     * Returns the pointer to the grid object
+     * @return TSharedPtr<Grid> Shared pointer to the grid object
+     */
     TSharedPtr<Grid> grid() const { return m_grid; }
 
 private:
@@ -22,4 +26,4 @@ private:
     TSharedPtr<Grid> m_grid;
 };
 
-}    // namespace Snake
+}    // namespace SnakeGame

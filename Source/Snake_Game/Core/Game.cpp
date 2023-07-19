@@ -3,7 +3,7 @@
 #include "Core/Game.h"
 #include "Core/Grid.h"
 
-using namespace Snake;
+using namespace SnakeGame;
 
 Game::Game(const Settings& setiings) : c_settings{setiings}
 {

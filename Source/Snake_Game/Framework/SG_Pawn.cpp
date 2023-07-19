@@ -3,6 +3,8 @@
 #include "Framework/SG_Pawn.h"
 #include "Camera/CameraComponent.h"
 
+using namespace SnakeGame;
+
 static double HalfFOVTan(double FOV)
 {
     return FMath::Tan(FMath::DegreesToRadians(FOV * 0.5));
@@ -28,15 +30,16 @@ ASG_Pawn::ASG_Pawn()
     Camera->SetupAttachment(GetRootComponent());
 }
 
-void ASG_Pawn::UpdateLocation(const Snake::Dim& GridSize, uint32 CellSize, const FTransform& InGridOrigin)
+void ASG_Pawn::UpdateLocation(const Dim& InGridSize, uint32 InCellSize, const FTransform& InGridOrigin)
 {
-    WorldWidth = GridSize.width * CellSize;
-    WorldHeight = GridSize.height * CellSize;
+    GridSize = InGridSize;
+    CellSize = InCellSize;
     GridOrigin = InGridOrigin;
 
     if (GEngine && GEngine->GameViewport && GEngine->GameViewport->Viewport)
     {
         FViewport* Viewport = GEngine->GameViewport->Viewport;
+        Viewport->ViewportResizedEvent.Remove(OnViewportResizedHandle);
         Viewport->ViewportResizedEvent.AddUObject(this, &ThisClass::OnViewportResized);
 
 #if WITH_EDITOR
@@ -47,6 +50,9 @@ void ASG_Pawn::UpdateLocation(const Snake::Dim& GridSize, uint32 CellSize, const
 
 void ASG_Pawn::OnViewportResized(FViewport* Viewport, uint32 Value)
 {
+    const double WorldWidth = GridSize.width * CellSize;
+    const double WorldHeight = GridSize.height * CellSize;
+
     if (!Viewport || !Viewport->GetSizeXY().X || !Viewport->GetSizeXY().Y || !WorldHeight)
         return;
 
@@ -55,11 +61,13 @@ void ASG_Pawn::OnViewportResized(FViewport* Viewport, uint32 Value)
     const double GridAspect = WorldWidth / WorldHeight;
     if (GridAspect < ViewportAspect)
     {
-        ZLocation = WorldHeight / HalfFOVTan(VerticalFOV(Camera->FieldOfView, 1.0 / ViewportAspect));
+        const uint32 MarginHeight = (GridSize.height + GridMargin) * CellSize;
+        ZLocation = MarginHeight / HalfFOVTan(VerticalFOV(Camera->FieldOfView, 1.0 / ViewportAspect));
     }
     else
     {
-        ZLocation = WorldWidth / HalfFOVTan(Camera->FieldOfView);
+        const uint32 MarginWidth = (GridSize.width + GridMargin) * CellSize;
+        ZLocation = MarginWidth / HalfFOVTan(Camera->FieldOfView);
     }
 
     SetActorLocation(GridOrigin.GetLocation() + 0.5 * FVector{WorldHeight, WorldWidth, ZLocation});

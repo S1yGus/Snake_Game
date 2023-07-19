@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-namespace Snake
+namespace SnakeGame
 {
 
 enum class CellType
@@ -24,4 +24,4 @@ struct Settings
     Dim gridSize;
 };
 
-}    // namespace Snake
+}    // namespace SnakeGame

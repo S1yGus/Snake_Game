@@ -1,23 +1,33 @@
 // Snake_Game, all rights reserved.
 
 #include "World/SG_Grid.h"
+#include "World/SG_WorldTypes.h"
 #include "Core/Grid.h"
 #include "Components/LineBatchComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogGridView, All, All)
 
-using namespace Snake;
+using namespace SnakeGame;
 
 ASG_Grid::ASG_Grid()
 {
-    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = false;
+
+    Origin = CreateDefaultSubobject<USceneComponent>("Origin");
+    check(Origin);
+    SetRootComponent(Origin);
+
+    GridMesh = CreateDefaultSubobject<UStaticMeshComponent>("GridMesh");
+    check(GridMesh);
+    GridMesh->SetupAttachment(GetRootComponent());
 }
 
 void ASG_Grid::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    DrawGrid();
+    // DrawDebugGrid();
 }
 
 void ASG_Grid::InitModel(const TSharedPtr<Grid>& Grid, uint32 InCellSize)
@@ -31,14 +41,33 @@ void ASG_Grid::InitModel(const TSharedPtr<Grid>& Grid, uint32 InCellSize)
     CellSize = InCellSize;
     WorldWidth = GridSize.width * CellSize;
     WorldHeight = GridSize.height * CellSize;
+
+    check(GridMesh->GetStaticMesh());
+    const FBox Box = GridMesh->GetStaticMesh()->GetBoundingBox();
+    const FVector BoxSize = Box.GetSize();
+    check(BoxSize.X);
+    check(BoxSize.Y);
+    GridMesh->SetRelativeScale3D(FVector(WorldHeight / BoxSize.X, WorldWidth / BoxSize.Y, 1.0));
+    GridMesh->SetRelativeLocation(0.5 * FVector(WorldHeight, WorldWidth, -BoxSize.Z));
+
+    MaterialInstance = GridMesh->CreateAndSetMaterialInstanceDynamic(0);
+    if (MaterialInstance)
+    {
+        MaterialInstance->SetVectorParameterValue(GirdSizeParameterName, FVector(GridSize.height, GridSize.width, 0.0));
+    }
 }
 
-void ASG_Grid::BeginPlay()
+void ASG_Grid::UpdateColors(const FSnakeColorsTableRow& ColorsSet)
 {
-    Super::BeginPlay();
+    if (MaterialInstance)
+    {
+        MaterialInstance->SetVectorParameterValue(BackgroundColorParameterName, ColorsSet.GridBackgroundColor);
+        MaterialInstance->SetVectorParameterValue(WallsColorParameterName, ColorsSet.GridWallsColor);
+        MaterialInstance->SetVectorParameterValue(LinesColorParameterName, ColorsSet.GridLinesColor);
+    }
 }
 
-void ASG_Grid::DrawGrid()
+void ASG_Grid::DrawDebugGrid()
 {
     if (!GetWorld() || !GetWorld()->LineBatcher)
         return;
