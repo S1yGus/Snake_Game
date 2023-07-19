@@ -7,11 +7,12 @@
 #include "Core/CoreTypes.h"
 #include "SG_Grid.generated.h"
 
-namespace Snake
+class UStaticMeshComponent;
+struct FSnakeColorsTableRow;
+
+namespace SnakeGame
 {
-
 class Grid;
-
 }
 
 UCLASS()
@@ -24,16 +25,47 @@ public:
 
     virtual void Tick(float DeltaTime) override;
 
-    void InitModel(const TSharedPtr<Snake::Grid>& Grid, uint32 InCellSize);
+    /**
+     * Set core model to be observed by the grid world actor
+     * @param Grid Model object
+     * @param InCellSize World size of the cell
+     */
+    void InitModel(const TSharedPtr<SnakeGame::Grid>& Grid, uint32 InCellSize);
+    /**
+     * Updates Grid colours
+     * @param ColorsSet The structure with grid color values
+     */
+    void UpdateColors(const FSnakeColorsTableRow& ColorsSet);
 
 protected:
-    virtual void BeginPlay() override;
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    USceneComponent* Origin;
+
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    UStaticMeshComponent* GridMesh;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Materials")
+    FName GirdSizeParameterName{"GridSize"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Materials")
+    FName BackgroundColorParameterName{"BackgroundColor"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Materials")
+    FName WallsColorParameterName{"WallsColor"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Materials")
+    FName LinesColorParameterName{"LinesColor"};
 
 private:
-    Snake::Dim GridSize;
+#pragma region With metadata
+    UPROPERTY()
+    UMaterialInstanceDynamic* MaterialInstance;
+#pragma endregion Variables with Unreal Header Tool metadata
+
+    SnakeGame::Dim GridSize;
     uint32 CellSize;
     uint32 WorldWidth;
     uint32 WorldHeight;
 
-    void DrawGrid();
+    void DrawDebugGrid();
 };

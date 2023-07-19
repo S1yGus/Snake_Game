@@ -7,7 +7,7 @@
 #include "Core/CoreTypes.h"
 #include "Core/Grid.h"
 
-using namespace Snake;
+using namespace SnakeGame;
 
 DEFINE_SPEC(FGridModel, "Snake", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 

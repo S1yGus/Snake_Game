@@ -7,7 +7,7 @@
 #include "Core/CoreTypes.h"
 #include "Core/Game.h"
 
-using namespace Snake;
+using namespace SnakeGame;
 
 DEFINE_SPEC(FGameModel, "Snake", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 

@@ -17,7 +17,13 @@ class SNAKE_GAME_API ASG_Pawn : public APawn
 public:
     ASG_Pawn();
 
-    void UpdateLocation(const Snake::Dim& GridSize, uint32 CellSize, const FTransform& InGridOrigin);
+    /**
+     * Updates pawn height fitting grid in viewport
+     * @param InGridSize Grid dimensions
+     * @param InCellSize World size of the cell
+     * @param InGridOrigin World transformation of the grid
+     */
+    void UpdateLocation(const SnakeGame::Dim& InGridSize, uint32 InCellSize, const FTransform& InGridOrigin);
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -26,10 +32,14 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")
     UCameraComponent* Camera;
 
-protected:
-    double WorldWidth;
-    double WorldHeight;
+    UPROPERTY(VisibleAnywhere, Category = "Design", Meta = (ClampMin = "0"))
+    int32 GridMargin{2};
+
+private:
+    SnakeGame::Dim GridSize;
+    uint32 CellSize;
     FTransform GridOrigin;
+    FDelegateHandle OnViewportResizedHandle;
 
     void OnViewportResized(FViewport* Viewport, uint32 Value);
 };

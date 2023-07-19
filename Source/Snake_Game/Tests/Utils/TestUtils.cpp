@@ -37,12 +37,12 @@ void CallFuncByNameWithParams(UObject* Object, const FString& FuncName, const TA
     Object->CallFunctionByNameWithArguments(*Command, OutputDeviceNull, nullptr, true);
 }
 
-FUntilLatentCommand::FUntilLatentCommand(TFunction<void()> InCallback, TFunction<void()> InTimeoutCallback, float InTimeout)
+FTPSUntilLatentCommand::FTPSUntilLatentCommand(TFunction<void()> InCallback, TFunction<void()> InTimeoutCallback, float InTimeout)
     : Callback(MoveTemp(InCallback)), TimeoutCallback(MoveTemp(InTimeoutCallback)), Timeout(InTimeout)
 {
 }
 
-bool FUntilLatentCommand::Update()
+bool FTPSUntilLatentCommand::Update()
 {
     const double NewTime = FPlatformTime::Seconds();
     if (NewTime - StartTime >= Timeout)
@@ -88,7 +88,7 @@ int32 GetAxisBindingIndexByName(UInputComponent* InputComp, const FString& AxisN
 
 FString GetTestDataDir()
 {
-    return FPaths::GameSourceDir().Append(FApp::GetProjectName()).Append("/Tests/Data/");
+    return FPaths::GameSourceDir().Append("TPS/Tests/Data/");
 }
 
 UWidget* FindWidgetByName(const UUserWidget* Widget, const FName& WidgetName)
