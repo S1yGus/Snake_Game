@@ -8,6 +8,7 @@
 #include "Tests/Utils/TestUtils.h"
 #include "Framework/SG_GameMode.h"
 #include "Framework/SG_Pawn.h"
+#include "Misc/PathViews.h"
 
 using namespace Test;
 
@@ -19,6 +20,31 @@ END_DEFINE_SPEC(FFramework)
 
 void FFramework::Define()
 {
+    Describe("Framework",
+             [this]()
+             {
+                 It("AllLevelsShouldExist",
+                    [this]()
+                    {
+                        TArray<FString> AllLevels;
+                        IFileManager::Get().FindFilesRecursive(AllLevels, *FPaths::ProjectContentDir(), *FString{"*.umap"}, true, false);
+
+                        const TArray<FString> SnakeLevels{"GameLevel"};
+                        for (const auto& SnakeLevel : SnakeLevels)
+                        {
+                            const auto* FoundLevel = AllLevels.FindByPredicate(
+                                [&](const FString& GameLevelPath)
+                                {
+                                    FStringView OutPath, OutName, OutExt;
+                                    FPathViews::Split(GameLevelPath, OutPath, OutName, OutExt);
+                                    return OutName.Equals(SnakeLevel);
+                                });
+
+                            TestNotNull(FString::Printf(TEXT("%s should exist"), *SnakeLevel), FoundLevel);
+                        }
+                    });
+             });
+
     Describe("Framework",
              [this]()
              {
