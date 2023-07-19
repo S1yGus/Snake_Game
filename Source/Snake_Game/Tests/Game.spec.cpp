@@ -20,7 +20,7 @@ void FGameModel::Define()
                     [this]()
                     {
                         // Arrange
-                        const Settings GameSettings{.gridSize{42, 42}};
+                        const Settings GameSettings{.gridSize{42, 42}, .gameSpeed{1.0f}, .snake{2, {1, 1}}};
 
                         // Act
                         const Game GameModel{GameSettings};

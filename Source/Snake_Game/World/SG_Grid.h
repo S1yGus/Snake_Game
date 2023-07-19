@@ -30,10 +30,11 @@ public:
      * @param Grid Model object
      * @param InCellSize World size of the cell
      */
-    void InitModel(const TSharedPtr<SnakeGame::Grid>& Grid, uint32 InCellSize);
+    void SetModel(const TSharedPtr<SnakeGame::Grid>& Grid, uint32 InCellSize);
+
     /**
-     * Updates Grid colours
-     * @param ColorsSet The structure with grid color values
+     * Updates grid colors
+     * @param ColorsSet The structure with color values
      */
     void UpdateColors(const FSnakeColorsTableRow& ColorsSet);
 

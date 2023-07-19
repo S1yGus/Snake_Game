@@ -48,7 +48,7 @@ void FWorld::Define()
                          if (!TestNotNull("Grid view should exist", GridView))
                              return;
 
-                         GridView->InitModel(GridModel, CellSize);
+                         GridView->SetModel(GridModel, CellSize);
                          GridView->FinishSpawning(Origin);
 
                          GridStaticMeshComp = GridView->FindComponentByClass<UStaticMeshComponent>();

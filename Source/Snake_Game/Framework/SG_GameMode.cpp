@@ -2,16 +2,20 @@
 
 #include "Framework/SG_GameMode.h"
 #include "Framework/SG_Pawn.h"
-#include "Core/CoreTypes.h"
 #include "Core/Grid.h"
-#include "World/SG_Grid.h"
 #include "World/SG_WorldTypes.h"
+#include "World/SG_Grid.h"
 #include "Engine/DataTable.h"
 #include "Engine/ExponentialHeightFog.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/ExponentialHeightFogComponent.h"
 
 using namespace SnakeGame;
+
+ASG_GameMode::ASG_GameMode()
+{
+    PrimaryActorTick.bCanEverTick = true;
+}
 
 void ASG_GameMode::StartPlay()
 {
@@ -21,15 +25,14 @@ void ASG_GameMode::StartPlay()
         return;
 
     // Init game model
-    const Settings GameSettings{.gridSize{GridSize.X, GridSize.Y}};
-    CoreGame = MakeUnique<Game>(GameSettings);
+    CoreGame = MakeUnique<Game>(GetSettings());
     check(CoreGame.IsValid());
 
     // Init grid view
     const auto GridOrigin{FTransform::Identity};
     GridView = GetWorld()->SpawnActorDeferred<ASG_Grid>(GridVisualClass, GridOrigin);
     check(GridView);
-    GridView->InitModel(CoreGame->grid(), CellSize);
+    GridView->SetModel(CoreGame->grid(), CellSize);
     GridView->FinishSpawning(GridOrigin);
 
     // Update colors
@@ -48,6 +51,13 @@ void ASG_GameMode::StartPlay()
             Pawn->UpdateLocation(CoreGame->grid()->size(), CellSize, GridOrigin);
         }
     }
+}
+
+void ASG_GameMode::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+
+    CoreGame->update(DeltaSeconds, SnakeInput);
 }
 
 void ASG_GameMode::NextColor()
@@ -76,4 +86,10 @@ void ASG_GameMode::FindFog()
     UGameplayStatics::GetAllActorsOfClass(this, AExponentialHeightFog::StaticClass(), Fogs);
     check(Fogs.Num() == 1);
     Fog = Cast<AExponentialHeightFog>(Fogs[0]);
+}
+
+SnakeGame::Settings ASG_GameMode::GetSettings() const
+{
+    checkf(SnakeDefaultSize <= GridSize.X / 2, TEXT("Default snake is too long!"));
+    return {.gridSize{GridSize.X, GridSize.Y}, .gameSpeed{GameSpeed}, .snake{SnakeDefaultSize, {GridSize.X / 2, GridSize.Y / 2}}};
 }
