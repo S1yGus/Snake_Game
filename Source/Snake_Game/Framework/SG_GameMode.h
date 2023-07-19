@@ -9,6 +9,7 @@
 #include "SG_GameMode.generated.h"
 
 class ASG_Grid;
+class ASG_Snake;
 class UDataTable;
 class AExponentialHeightFog;
 
@@ -39,6 +40,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     TSubclassOf<ASG_Grid> GridVisualClass;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    TSubclassOf<ASG_Snake> SnakeVisualClass;
+
     UPROPERTY(EditDefaultsOnly, Category = "Design")
     UDataTable* SnakeColorsTable;
 
@@ -46,6 +50,9 @@ private:
 #pragma region With metadata
     UPROPERTY()
     ASG_Grid* GridView;
+
+    UPROPERTY()
+    ASG_Snake* SnakeView;
 
     UPROPERTY()
     AExponentialHeightFog* Fog;

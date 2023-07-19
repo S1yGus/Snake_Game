@@ -5,6 +5,7 @@
 #include "Core/Grid.h"
 #include "World/SG_WorldTypes.h"
 #include "World/SG_Grid.h"
+#include "World/SG_Snake.h"
 #include "Engine/DataTable.h"
 #include "Engine/ExponentialHeightFog.h"
 #include "Kismet/GameplayStatics.h"
@@ -34,6 +35,12 @@ void ASG_GameMode::StartPlay()
     check(GridView);
     GridView->SetModel(CoreGame->grid(), CellSize);
     GridView->FinishSpawning(GridOrigin);
+
+    // Init snake view
+    SnakeView = GetWorld()->SpawnActorDeferred<ASG_Snake>(SnakeVisualClass, GridOrigin);
+    check(SnakeView);
+    SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
+    SnakeView->FinishSpawning(GridOrigin);
 
     // Update colors
     check(SnakeColorsTable);
@@ -72,6 +79,7 @@ void ASG_GameMode::UpdateColors()
     SnakeColorsTable->GetAllRows<FSnakeColorsTableRow>({}, SnakeColorsTableRows);
     const auto* ColorsSet = SnakeColorsTableRows[ColorsTableIndex];
     GridView->UpdateColors(*ColorsSet);
+    SnakeView->UpdateColors(*ColorsSet);
 
     if (Fog && Fog->GetComponent())
     {
