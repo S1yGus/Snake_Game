@@ -30,11 +30,11 @@ void ASG_Grid::Tick(float DeltaTime)
     // DrawDebugGrid();
 }
 
-void ASG_Grid::InitModel(const TSharedPtr<Grid>& Grid, uint32 InCellSize)
+void ASG_Grid::SetModel(const TSharedPtr<Grid>& Grid, uint32 InCellSize)
 {
     if (!Grid.IsValid())
     {
-        UE_LOG(LogGridView, Fatal, TEXT("Grid is nullptr, game aborted!"));
+        UE_LOG(LogGridView, Fatal, TEXT("Grid model is nullptr, game aborted!"));
     }
 
     GridSize = Grid->size();

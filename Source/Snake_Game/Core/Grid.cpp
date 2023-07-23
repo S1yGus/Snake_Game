@@ -14,6 +14,31 @@ Grid::Grid(const Dim& dim) : c_size{dim.width + 2, dim.height + 2}
     printDebug();
 }
 
+void Grid::update(const SnakeNode* link, CellType cellType)
+{
+    if (!m_indexesByType.Contains(cellType))
+    {
+        m_indexesByType.Add(cellType, {});
+    }
+
+    clearCellsByType(cellType);
+
+    while (link)
+    {
+        const auto index = posToIndex(link->GetValue());
+        m_cells[index] = cellType;
+        m_indexesByType[cellType].Add(index);
+        link = link->GetNextNode();
+    }
+
+    printDebug();
+}
+
+bool Grid::hitTest(const Position& position, CellType cellType)
+{
+    return m_cells[posToIndex(position)] == cellType;
+}
+
 void Grid::initWalls()
 {
     for (uint32 y = 0; y != c_size.height; ++y)
@@ -22,10 +47,19 @@ void Grid::initWalls()
         {
             if (y == 0 || y == c_size.height - 1 || x == 0 || x == c_size.width - 1)
             {
-                m_cells[x + y * c_size.width] = CellType::Wall;
+                m_cells[posToIndex(x, y)] = CellType::Wall;
             }
         }
     }
+}
+
+void Grid::clearCellsByType(CellType type)
+{
+    for (auto index : m_indexesByType[type])
+    {
+        m_cells[index] = CellType::Empty;
+    }
+    m_indexesByType[type].Empty();
 }
 
 void Grid::printDebug()
@@ -37,13 +71,16 @@ void Grid::printDebug()
         for (uint32 x = 0; x != c_size.width; ++x)
         {
             TCHAR ch{' '};
-            switch (m_cells[x + y * c_size.width])
+            switch (m_cells[posToIndex(x, y)])
             {
                 case CellType::Empty:
                     ch = '0';
                     break;
                 case CellType::Wall:
                     ch = '*';
+                    break;
+                case CellType::Snake:
+                    ch = '_';
                     break;
             }
 
@@ -53,4 +90,14 @@ void Grid::printDebug()
         UE_LOG(LogGrid, Display, TEXT("%s"), *line);
     }
 #endif
+}
+
+uint32 Grid::posToIndex(uint32 x, uint32 y)
+{
+    return x + y * c_size.width;
+}
+
+uint32 Grid::posToIndex(const Position& position)
+{
+    return posToIndex(position.x, position.y);
 }
