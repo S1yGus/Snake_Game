@@ -9,25 +9,46 @@
 
 using namespace SnakeGame;
 
-DEFINE_SPEC(FGridModel, "Snake", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
+BEGIN_DEFINE_SPEC(FCoreGrid, "Snake", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 
-void FGridModel::Define()
+Dim GridSize;
+TUniquePtr<Grid> CoreGrid;
+
+END_DEFINE_SPEC(FCoreGrid)
+
+void FCoreGrid::Define()
 {
-    Describe("GridModel",
+    Describe("Core.Grid",
              [this]()
              {
+                 BeforeEach(
+                     [this]()
+                     {
+                         GridSize = {42, 42};
+                         CoreGrid = MakeUnique<Grid>(GridSize);
+                     });
                  It("GridSizeMustIncludeWalls",
                     [this]()
                     {
-                        // Arrange
-                        const Dim InitGridSize{42, 42};
+                        TestTrueExpr(CoreGrid->size().width == GridSize.width + 2    //
+                                     && CoreGrid->size().height == GridSize.height + 2);
+                    });
+                 It("HitTest.PositionMightBeUpdatedCorrectly.SnakeNode",
+                    [this]()
+                    {
+                        const Position FirstPoition{1, 1};
+                        const Position SecondPoition{2, 1};
+                        SnakeList Snake;
+                        Snake.AddHead(FirstPoition);
+                        Snake.AddTail(SecondPoition);
 
-                        // Act
-                        const Grid GridModel{InitGridSize};
+                        TestTrueExpr(CoreGrid->hitTest(FirstPoition, CellType::Empty));
+                        TestTrueExpr(CoreGrid->hitTest(SecondPoition, CellType::Empty));
 
-                        // Assert
-                        TestTrueExpr(GridModel.size().width == InitGridSize.width + 2    //
-                                     && GridModel.size().height == InitGridSize.height + 2);
+                        CoreGrid->update(Snake.GetHead(), CellType::Snake);
+
+                        TestTrueExpr(CoreGrid->hitTest(FirstPoition, CellType::Snake));
+                        TestTrueExpr(CoreGrid->hitTest(SecondPoition, CellType::Snake));
                     });
              });
 }

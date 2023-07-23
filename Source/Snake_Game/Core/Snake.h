@@ -39,6 +39,7 @@ public:
 
 private:
     SnakeList m_links;
+    Input lastInput{Input::defaultInput};
 };
 
 }    // namespace SnakeGame

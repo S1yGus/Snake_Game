@@ -14,6 +14,11 @@ Snake::Snake(const Settings::Snake& settings)
 
 void Snake::move(const Input& input)
 {
+    if (!input.opposite(lastInput))
+    {
+        lastInput = input;
+    }
+
     m_links.RemoveNode(m_links.GetTail());
-    m_links.AddHead(m_links.GetHead()->GetValue() + input);
+    m_links.AddHead(m_links.GetHead()->GetValue() + lastInput);
 }

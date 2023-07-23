@@ -26,7 +26,7 @@ void ASG_GameMode::StartPlay()
         return;
 
     // Init game model
-    CoreGame = MakeUnique<Game>(GetSettings());
+    CoreGame = MakeUnique<Game>(MakeSettings());
     check(CoreGame.IsValid());
 
     // Init grid view
@@ -96,7 +96,7 @@ void ASG_GameMode::FindFog()
     Fog = Cast<AExponentialHeightFog>(Fogs[0]);
 }
 
-SnakeGame::Settings ASG_GameMode::GetSettings() const
+SnakeGame::Settings ASG_GameMode::MakeSettings() const
 {
     checkf(SnakeDefaultSize <= GridSize.X / 2, TEXT("Default snake is too long!"));
     return {.gridSize{GridSize.X, GridSize.Y}, .gameSpeed{GameSpeed}, .snake{SnakeDefaultSize, {GridSize.X / 2, GridSize.Y / 2}}};

@@ -25,6 +25,10 @@ struct Input
 {
     int8 x;
     int8 y;
+
+    static const Input defaultInput;
+
+    FORCEINLINE bool opposite(const Input& rhs) const { return (x != 0 && x == -rhs.x) || (y != 0 && y == -rhs.y); }
 };
 
 struct Position
@@ -32,7 +36,12 @@ struct Position
     uint32 x;
     uint32 y;
 
-    FORCEINLINE Position operator+(const Input& input) { return {x + input.x, y + input.y}; }
+    static const Position zero;
+
+    FORCEINLINE Position operator+(const Input& input) const { return {x + input.x, y + input.y}; }
+    FORCEINLINE Position operator+(const Position& rhs) const { return {x + rhs.x, y + rhs.y}; }
+    FORCEINLINE Position operator-(const Position& rhs) const { return {x - rhs.x, y - rhs.y}; }
+    FORCEINLINE bool operator==(const Position& rhs) const { return x == rhs.x && y == rhs.y; }
 };
 
 struct Settings
