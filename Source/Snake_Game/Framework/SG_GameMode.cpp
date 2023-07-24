@@ -10,6 +10,9 @@
 #include "Engine/ExponentialHeightFog.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/ExponentialHeightFogComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputComponent.h"
 
 using namespace SnakeGame;
 
@@ -58,6 +61,8 @@ void ASG_GameMode::StartPlay()
             Pawn->UpdateLocation(CoreGame->grid()->size(), CellSize, GridOrigin);
         }
     }
+
+    SetupInput();
 }
 
 void ASG_GameMode::Tick(float DeltaSeconds)
@@ -100,4 +105,54 @@ SnakeGame::Settings ASG_GameMode::MakeSettings() const
 {
     checkf(SnakeDefaultSize <= GridSize.X / 2, TEXT("Default snake is too long!"));
     return {.gridSize{GridSize.X, GridSize.Y}, .gameSpeed{GameSpeed}, .snake{SnakeDefaultSize, {GridSize.X / 2, GridSize.Y / 2}}};
+}
+
+void ASG_GameMode::SetupInput()
+{
+    if (GetWorld())
+    {
+        if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+        {
+            if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+            {
+                if (auto* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+                {
+                    InputSystem->AddMappingContext(SnakeInputMapping, 0);
+                }
+            }
+
+            if (auto* InputComponen = Cast<UEnhancedInputComponent>(PC->InputComponent))
+            {
+                InputComponen->BindAction(MoveForwardInputAction, ETriggerEvent::Started, this, &ThisClass::OnMoveForward);
+                InputComponen->BindAction(MoveRightInputAction, ETriggerEvent::Started, this, &ThisClass::OnMoveRight);
+                InputComponen->BindAction(ResetInputAction, ETriggerEvent::Started, this, &ThisClass::OnReset);
+            }
+        }
+    }
+}
+
+void ASG_GameMode::OnMoveForward(const FInputActionValue& Value)
+{
+    if (const float FloatValue = Value.Get<float>())
+    {
+        SnakeInput = Input{0, static_cast<int8>(FloatValue)};
+    }
+}
+
+void ASG_GameMode::OnMoveRight(const FInputActionValue& Value)
+{
+    if (const float FloatValue = Value.Get<float>())
+    {
+        SnakeInput = Input{static_cast<int8>(FloatValue), 0};
+    }
+}
+
+void ASG_GameMode::OnReset(const FInputActionValue& Value)
+{
+    CoreGame.Reset(new Game(MakeSettings()));
+    check(CoreGame.IsValid());
+    GridView->SetModel(CoreGame->grid(), CellSize);
+    SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
+    SnakeInput = Input::defaultInput;
+    NextColor();
 }

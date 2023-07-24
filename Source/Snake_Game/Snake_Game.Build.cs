@@ -15,7 +15,7 @@ public class Snake_Game : ModuleRules
             OptimizeCode = CodeOptimization.Never;
         }
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "EnhancedInput" });
         PublicIncludePaths.AddRange(new string[] { "Snake_Game" });
 
         if (Target.Configuration != UnrealTargetConfiguration.Shipping)
