@@ -6,12 +6,15 @@
 #include "GameFramework/GameModeBase.h"
 #include "Core/CoreTypes.h"
 #include "Core/Game.h"
+#include "InputActionValue.h"
 #include "SG_GameMode.generated.h"
 
 class ASG_Grid;
 class ASG_Snake;
 class UDataTable;
 class AExponentialHeightFog;
+class UInputAction;
+class UInputMappingContext;
 
 UCLASS()
 class SNAKE_GAME_API ASG_GameMode : public AGameModeBase
@@ -37,14 +40,26 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "0.01", ClampMax = "1.0"))
     float GameSpeed{1.0f};
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    UPROPERTY(EditDefaultsOnly, Category = "Design")
     TSubclassOf<ASG_Grid> GridVisualClass;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    UPROPERTY(EditDefaultsOnly, Category = "Design")
     TSubclassOf<ASG_Snake> SnakeVisualClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "Design")
     UDataTable* SnakeColorsTable;
+
+    UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
+    TObjectPtr<UInputAction> MoveForwardInputAction;
+
+    UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
+    TObjectPtr<UInputAction> MoveRightInputAction;
+
+    UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
+    TObjectPtr<UInputAction> ResetInputAction;
+
+    UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
+    TObjectPtr<UInputMappingContext> SnakeInputMapping;
 
 private:
 #pragma region With metadata
@@ -67,5 +82,11 @@ private:
 
     void UpdateColors();
     void FindFog();
+
     SnakeGame::Settings MakeSettings() const;
+
+    void SetupInput();
+    void OnMoveForward(const FInputActionValue& Value);
+    void OnMoveRight(const FInputActionValue& Value);
+    void OnReset(const FInputActionValue& Value);
 };
