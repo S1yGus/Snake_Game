@@ -12,7 +12,8 @@ enum class CellType
 {
     Empty = 0,
     Wall,
-    Snake
+    Snake,
+    Food
 };
 
 struct Dim

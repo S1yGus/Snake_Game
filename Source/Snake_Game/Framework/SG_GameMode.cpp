@@ -104,7 +104,9 @@ void ASG_GameMode::FindFog()
 SnakeGame::Settings ASG_GameMode::MakeSettings() const
 {
     checkf(SnakeDefaultSize <= GridSize.X / 2, TEXT("Default snake is too long!"));
-    return {.gridSize{GridSize.X, GridSize.Y}, .gameSpeed{GameSpeed}, .snake{SnakeDefaultSize, {GridSize.X / 2, GridSize.Y / 2}}};
+    return {.gridSize{GridSize.X, GridSize.Y},    //
+            .gameSpeed{GameSpeed},                //
+            .snake{.defaultSize{SnakeDefaultSize}, .startPosition{Grid::center({GridSize.X, GridSize.Y})}}};
 }
 
 void ASG_GameMode::SetupInput()

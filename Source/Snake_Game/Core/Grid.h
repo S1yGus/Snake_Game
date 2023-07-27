@@ -27,12 +27,33 @@ public:
     void update(const SnakeNode* link, CellType cellType);
 
     /**
+     * Update cells with a given cell type
+     * @param position Position on the grid to be updated
+     * @param cellType Type of the cell
+     */
+    void update(const Position& position, CellType cellType);
+
+    /**
      * Checks cell type in the given position
      * @param position Position on the grid
      * @param cellType Type of the cell
      * @return bool Hit test status
      */
-    bool hitTest(const Position& position, CellType cellType);
+    bool hitTest(const Position& position, CellType cellType) const;
+
+    /**
+     * Returns empty position by ref
+     * @param[out] position Position on the grid
+     * @return bool True if empty position exists (if position doesn't exist then snake body fills whole grid)
+     */
+    UE_NODISCARD bool randomEmptyPosition(Position& position) const;
+
+    /**
+     * Returns center position in grid (walls included)
+     * @param girdSize Grid size in two dimensions
+     * @return Position Center of grid
+     */
+    static Position center(const Dim& girdSize);
 
 private:
     const Dim c_size;
@@ -40,11 +61,13 @@ private:
     TMap<CellType, TArray<uint32>> m_indexesByType;
 
     void initWalls();
-    void clearCellsByType(CellType type);
+    void clearCellsByType(CellType cellType);
+    void updateInternal(const Position& position, CellType cellType);
     void printDebug();
 
-    FORCEINLINE uint32 posToIndex(uint32 x, uint32 y);
-    FORCEINLINE uint32 posToIndex(const Position& position);
+    FORCEINLINE uint32 posToIndex(uint32 x, uint32 y) const;
+    FORCEINLINE uint32 posToIndex(const Position& position) const;
+    FORCEINLINE Position indexToPos(uint32 index) const;
 };
 
 }    // namespace SnakeGame
