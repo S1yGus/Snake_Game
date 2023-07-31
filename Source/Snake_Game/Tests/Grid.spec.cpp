@@ -39,7 +39,7 @@ void FCoreGrid::Define()
                         const Position FirstPoition{1, 1};
                         const Position SecondPoition{2, 1};
                         SnakeList Snake;
-                        Snake.AddHead(FirstPoition);
+                        Snake.AddTail(FirstPoition);
                         Snake.AddTail(SecondPoition);
 
                         TestTrueExpr(CoreGrid->hitTest(FirstPoition, CellType::Empty));
@@ -49,6 +49,83 @@ void FCoreGrid::Define()
 
                         TestTrueExpr(CoreGrid->hitTest(FirstPoition, CellType::Snake));
                         TestTrueExpr(CoreGrid->hitTest(SecondPoition, CellType::Snake));
+                    });
+                 It("HitTest.PositionMightBeUpdatedCorrectly.Position",
+                    [this]()
+                    {
+                        const Position Poition{1, 1};
+
+                        TestTrueExpr(CoreGrid->hitTest(Poition, CellType::Empty));
+
+                        CoreGrid->update(Poition, CellType::Food);
+
+                        TestTrueExpr(CoreGrid->hitTest(Poition, CellType::Food));
+                    });
+                 It("CellsMightBeClearCorrectly",
+                    [this]()
+                    {
+                        const Position FirstPoition{1, 1};
+                        const Position SecondPoition{2, 1};
+
+                        TestTrueExpr(CoreGrid->hitTest(FirstPoition, CellType::Empty));
+                        TestTrueExpr(CoreGrid->hitTest(SecondPoition, CellType::Empty));
+
+                        CoreGrid->update(FirstPoition, CellType::Food);
+
+                        TestTrueExpr(CoreGrid->hitTest(FirstPoition, CellType::Food));
+                        TestTrueExpr(CoreGrid->hitTest(SecondPoition, CellType::Empty));
+
+                        CoreGrid->update(SecondPoition, CellType::Food);
+
+                        TestTrueExpr(CoreGrid->hitTest(FirstPoition, CellType::Empty));
+                        TestTrueExpr(CoreGrid->hitTest(SecondPoition, CellType::Food));
+                    });
+                 It("GridCenterShouldBeCalculateCorrectly",
+                    [this]()
+                    {
+                        TestTrueExpr(Grid::center({13, 7}) == Position(7, 4));
+                        TestTrueExpr(Grid::center({12, 6}) == Position(7, 4));
+                    });
+             });
+
+    Describe("Core.Grid",
+             [this]()
+             {
+                 BeforeEach(
+                     [this]()
+                     {
+                         GridSize = {2, 2};
+                         CoreGrid = MakeUnique<Grid>(GridSize);
+                     });
+                 It("EmptyRandomPositionCanBeFound",
+                    [this]()
+                    {
+                        SnakeList Snake;
+                        Snake.AddTail({1, 2});
+                        Snake.AddTail({2, 2});
+                        Snake.AddTail({2, 1});
+                        CoreGrid->update(Snake.GetHead(), CellType::Snake);
+
+                        Position FoundPosition;
+                        const bool bFound = CoreGrid->randomEmptyPosition(FoundPosition);
+
+                        TestTrueExpr(bFound);
+                        TestTrueExpr(FoundPosition == Position(1, 1));
+                    });
+                 It("EmptyRandomPositionCan'tBeFound",
+                    [this]()
+                    {
+                        SnakeList Snake;
+                        Snake.AddTail({1, 1});
+                        Snake.AddTail({1, 2});
+                        Snake.AddTail({2, 2});
+                        Snake.AddTail({2, 1});
+                        CoreGrid->update(Snake.GetHead(), CellType::Snake);
+
+                        Position FoundPosition;
+                        const bool bFound = CoreGrid->randomEmptyPosition(FoundPosition);
+
+                        TestTrueExpr(!bFound);
                     });
              });
 }

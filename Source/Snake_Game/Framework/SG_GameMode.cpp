@@ -3,9 +3,11 @@
 #include "Framework/SG_GameMode.h"
 #include "Framework/SG_Pawn.h"
 #include "Core/Grid.h"
+#include "Core/Food.h"
 #include "World/SG_WorldTypes.h"
 #include "World/SG_Grid.h"
 #include "World/SG_Snake.h"
+#include "World/SG_Food.h"
 #include "Engine/DataTable.h"
 #include "Engine/ExponentialHeightFog.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,6 +15,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
+#include "World/SG_WorldUtils.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogSnakeGameMode, All, All)
 
 using namespace SnakeGame;
 
@@ -31,6 +36,7 @@ void ASG_GameMode::StartPlay()
     // Init game model
     CoreGame = MakeUnique<Game>(MakeSettings());
     check(CoreGame.IsValid());
+    SubscribeOnGameEvent();
 
     // Init grid view
     const auto GridOrigin{FTransform::Identity};
@@ -44,6 +50,14 @@ void ASG_GameMode::StartPlay()
     check(SnakeView);
     SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
     SnakeView->FinishSpawning(GridOrigin);
+
+    // Init food view
+    const auto FoodTransform = GridOrigin * FTransform(Utils::PosToVector(CoreGame->food()->position(), CoreGame->grid()->size(), CellSize));
+    FoodView = GetWorld()->SpawnActorDeferred<ASG_Food>(FoodVisualClass, FoodTransform);
+    check(FoodView);
+    FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridOrigin.GetLocation());
+    FoodView->UpdateScale(CellSize);
+    FoodView->FinishSpawning(FoodTransform);
 
     // Update colors
     check(SnakeColorsTable);
@@ -85,6 +99,7 @@ void ASG_GameMode::UpdateColors()
     const auto* ColorsSet = SnakeColorsTableRows[ColorsTableIndex];
     GridView->UpdateColors(*ColorsSet);
     SnakeView->UpdateColors(*ColorsSet);
+    FoodView->UpdateColor(ColorsSet->FoodColor);
 
     if (Fog && Fog->GetComponent())
     {
@@ -104,7 +119,9 @@ void ASG_GameMode::FindFog()
 SnakeGame::Settings ASG_GameMode::MakeSettings() const
 {
     checkf(SnakeDefaultSize <= GridSize.X / 2, TEXT("Default snake is too long!"));
-    return {.gridSize{GridSize.X, GridSize.Y}, .gameSpeed{GameSpeed}, .snake{SnakeDefaultSize, {GridSize.X / 2, GridSize.Y / 2}}};
+    return {.gridSize{GridSize.X, GridSize.Y},    //
+            .gameSpeed{GameSpeed},                //
+            .snake{.defaultSize{SnakeDefaultSize}, .startPosition{Grid::center({GridSize.X, GridSize.Y})}}};
 }
 
 void ASG_GameMode::SetupInput()
@@ -151,8 +168,38 @@ void ASG_GameMode::OnReset(const FInputActionValue& Value)
 {
     CoreGame.Reset(new Game(MakeSettings()));
     check(CoreGame.IsValid());
+    SubscribeOnGameEvent();
     GridView->SetModel(CoreGame->grid(), CellSize);
     SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
+    FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridView->GetActorLocation());
     SnakeInput = Input::defaultInput;
     NextColor();
+}
+
+void ASG_GameMode::SubscribeOnGameEvent()
+{
+    CoreGame->subscribeOnGameEvent(
+        [&](GameEvent Event)
+        {
+            switch (Event)
+            {
+                case GameEvent::GameOver:
+#if !UE_BUILD_SHIPPING
+                    UE_LOG(LogSnakeGameMode, Display, TEXT("Game Over!"));
+                    UE_LOG(LogSnakeGameMode, Display, TEXT("Score: %d"), CoreGame->score());
+#endif
+                    break;
+                case GameEvent::GameCompleted:
+#if !UE_BUILD_SHIPPING
+                    UE_LOG(LogSnakeGameMode, Display, TEXT("Game Completed!"));
+                    UE_LOG(LogSnakeGameMode, Display, TEXT("Score: %d"), CoreGame->score());
+#endif
+                    break;
+                case GameEvent::FoodTaken:
+                    FoodView->RestartScaling();
+                    break;
+                default:
+                    break;
+            }
+        });
 }

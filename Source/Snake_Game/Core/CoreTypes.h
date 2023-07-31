@@ -12,7 +12,15 @@ enum class CellType
 {
     Empty = 0,
     Wall,
-    Snake
+    Snake,
+    Food
+};
+
+enum class GameEvent
+{
+    GameOver = 0,
+    GameCompleted,
+    FoodTaken
 };
 
 struct Dim
@@ -57,5 +65,7 @@ struct Settings
 
 using SnakeList = TDoubleLinkedList<Position>;
 using SnakeNode = SnakeList::TDoubleLinkedListNode;
+
+using GameEventCallback = TFunction<void(GameEvent)>;
 
 }    // namespace SnakeGame

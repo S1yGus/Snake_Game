@@ -37,9 +37,15 @@ public:
      */
     void move(const Input& input);
 
+    /**
+     * Increases snake length, prevents tail removal when moving
+     */
+    void increase();
+
 private:
     SnakeList m_links;
-    Input lastInput{Input::defaultInput};
+    Input m_lastInput{Input::defaultInput};
+    bool b_increase{false};
 };
 
 }    // namespace SnakeGame

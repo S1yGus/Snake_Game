@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "World/SG_Grid.h"
 #include "World/SG_Snake.h"
+#include "World/SG_Food.h"
 
 using namespace Test;
 
@@ -36,6 +37,8 @@ void FWorld::Define()
                         UGameplayStatics::GetAllActorsOfClass(World, ASG_Grid::StaticClass(), Grids);
 
                         TestTrueExpr(Grids.Num() == 1 && Grids[0]);
+
+                        SpecCloseLevel(World);
                     });
                  It("OnlyOneSnakeShouldExist",
                     [this]()
@@ -44,6 +47,18 @@ void FWorld::Define()
                         UGameplayStatics::GetAllActorsOfClass(World, ASG_Snake::StaticClass(), Snakes);
 
                         TestTrueExpr(Snakes.Num() == 1 && Snakes[0]);
+
+                        SpecCloseLevel(World);
+                    });
+                 It("OnlyOneFoodShouldExist",
+                    [this]()
+                    {
+                        TArray<AActor*> Foods;
+                        UGameplayStatics::GetAllActorsOfClass(World, ASG_Food::StaticClass(), Foods);
+
+                        TestTrueExpr(Foods.Num() == 1 && Foods[0]);
+
+                        SpecCloseLevel(World);
                     });
              });
 }

@@ -18,6 +18,7 @@ BEGIN_DEFINE_SPEC(FWorldSnake, "Snake", EAutomationTestFlags::ApplicationContext
 
 UWorld* World;
 Settings::Snake Settings;
+TSharedPtr<Snake> SnakeModel;
 ASG_Snake* SnakeView;
 
 END_DEFINE_SPEC(FWorldSnake)
@@ -33,8 +34,8 @@ void FWorldSnake::Define()
                          AutomationOpenMap("/Game/Tests/EmptyTestLevel");
                          World = GetTestGameWorld();
 
-                         Settings = {.defaultSize = 1, .startPosition = {1, 1}};
-                         auto SnakeModel = MakeShared<Snake>(Settings);
+                         Settings = {.defaultSize = 3, .startPosition = {1, 1}};
+                         SnakeModel = MakeShared<Snake>(Settings);
 
                          const char* SnakeBPName{"Blueprint '/Game/World/BP_Snake.BP_Snake'"};
                          const auto Origin{FTransform::Identity};
@@ -47,13 +48,32 @@ void FWorldSnake::Define()
                          SnakeView->SetModel(SnakeModel, CellSize, GridSize);
                          SnakeView->FinishSpawning(Origin);
                      });
-                 It("NumberOfWorldLinksMustMatchSnakeSize",
+                 It("NumberOfWorldLinksMustMatchDefaultSnakeSize",
                     [this]()
                     {
                         TArray<AActor*> Links;
                         UGameplayStatics::GetAllActorsOfClass(World, ASG_SnakeLink::StaticClass(), Links);
 
                         TestTrueExpr(Links.Num() == Settings.defaultSize);
+
+                        SpecCloseLevel(World);
+                    });
+                 It("NumberOfWorldLinksMustMatchSnakeSizeAfterIncrease",
+                    [this]()
+                    {
+                        SnakeModel->increase();
+                        SnakeModel->move(Input::defaultInput);
+
+                        ADD_LATENT_AUTOMATION_COMMAND(FDelayedFunctionLatentCommand(
+                            [=]()
+                            {
+                                TArray<AActor*> Links;
+                                UGameplayStatics::GetAllActorsOfClass(World, ASG_SnakeLink::StaticClass(), Links);
+
+                                TestTrueExpr(Links.Num() == Settings.defaultSize + 1);
+
+                                SpecCloseLevel(World);
+                            }));
                     });
              });
 }

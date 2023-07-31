@@ -115,6 +115,25 @@ void FCoreSnake::Define()
                             NextPosition = {NextPosition.x - 1, NextPosition.y};
                         }
                     });
+                 It("SnakeCanIncreaseOnMove",
+                    [this]()
+                    {
+                        for (uint32 i = 1; i != 10; ++i)
+                        {
+                            CoreSnake->increase();
+                            CoreSnake->move(Input::defaultInput);
+                            TestTrueExpr(CoreSnake->links().Num() == Settings.defaultSize + i);
+                        }
+                    });
+                 It("SnakeCan'tIncreaseWithoutMove",
+                    [this]()
+                    {
+                        for (uint32 i = 1; i != 10; ++i)
+                        {
+                            CoreSnake->increase();
+                            TestTrueExpr(CoreSnake->links().Num() == Settings.defaultSize);
+                        }
+                    });
              });
 }
 

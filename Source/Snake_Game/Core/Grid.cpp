@@ -16,27 +16,64 @@ Grid::Grid(const Dim& dim) : c_size{dim.width + 2, dim.height + 2}
 
 void Grid::update(const SnakeNode* link, CellType cellType)
 {
-    if (!m_indexesByType.Contains(cellType))
-    {
-        m_indexesByType.Add(cellType, {});
-    }
-
+    checkCellType(cellType);
     clearCellsByType(cellType);
 
     while (link)
     {
-        const auto index = posToIndex(link->GetValue());
-        m_cells[index] = cellType;
-        m_indexesByType[cellType].Add(index);
+        updateInternal(link->GetValue(), cellType);
         link = link->GetNextNode();
     }
 
+#if !UE_BUILD_SHIPPING
     printDebug();
+#endif
 }
 
-bool Grid::hitTest(const Position& position, CellType cellType)
+void Grid::update(const Position& position, CellType cellType)
+{
+    checkCellType(cellType);
+    clearCellsByType(cellType);
+
+    updateInternal(position, cellType);
+
+#if !UE_BUILD_SHIPPING
+    printDebug();
+#endif
+}
+
+bool Grid::hitTest(const Position& position, CellType cellType) const
 {
     return m_cells[posToIndex(position)] == cellType;
+}
+
+bool Grid::randomEmptyPosition(Position& position) const
+{
+    const auto index = FMath::RandHelper(m_cells.Num());
+    for (uint32 i = index; i != m_cells.Num(); ++i)
+    {
+        if (m_cells[i] == CellType::Empty)
+        {
+            position = indexToPos(i);
+            return true;
+        }
+    }
+
+    for (uint32 i = 0; i != index; ++i)
+    {
+        if (m_cells[i] == CellType::Empty)
+        {
+            position = indexToPos(i);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+Position Grid::center(const Dim& girdSize)
+{
+    return {girdSize.width / 2 + 1, girdSize.height / 2 + 1};
 }
 
 void Grid::initWalls()
@@ -53,18 +90,32 @@ void Grid::initWalls()
     }
 }
 
-void Grid::clearCellsByType(CellType type)
+void SnakeGame::Grid::checkCellType(CellType cellType)
 {
-    for (auto index : m_indexesByType[type])
+    if (!m_indexesByType.Contains(cellType))
+    {
+        m_indexesByType.Add(cellType, {});
+    }
+}
+
+void Grid::clearCellsByType(CellType cellType)
+{
+    for (auto index : m_indexesByType[cellType])
     {
         m_cells[index] = CellType::Empty;
     }
-    m_indexesByType[type].Empty();
+    m_indexesByType[cellType].Empty();
 }
 
-void Grid::printDebug()
+void Grid::updateInternal(const Position& position, CellType cellType)
 {
-#if !UE_BUILD_SHIPPING
+    const auto index = posToIndex(position);
+    m_cells[index] = cellType;
+    m_indexesByType[cellType].Add(index);
+}
+
+void Grid::printDebug() const
+{
     for (uint32 y = 0; y != c_size.height; ++y)
     {
         FString line;
@@ -82,6 +133,9 @@ void Grid::printDebug()
                 case CellType::Snake:
                     ch = '_';
                     break;
+                case CellType::Food:
+                    ch = '+';
+                    break;
             }
 
             line.AppendChar(ch).AppendChar(' ');
@@ -89,15 +143,19 @@ void Grid::printDebug()
 
         UE_LOG(LogGrid, Display, TEXT("%s"), *line);
     }
-#endif
 }
 
-uint32 Grid::posToIndex(uint32 x, uint32 y)
+uint32 Grid::posToIndex(uint32 x, uint32 y) const
 {
     return x + y * c_size.width;
 }
 
-uint32 Grid::posToIndex(const Position& position)
+uint32 Grid::posToIndex(const Position& position) const
 {
     return posToIndex(position.x, position.y);
+}
+
+Position Grid::indexToPos(uint32 index) const
+{
+    return {index % c_size.width, static_cast<uint32>(index / c_size.width)};
 }

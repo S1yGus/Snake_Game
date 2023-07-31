@@ -3,6 +3,7 @@
 #include "Core/Game.h"
 #include "Core/Grid.h"
 #include "Core/Snake.h"
+#include "Core/Food.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogGame, All, All)
 
@@ -14,8 +15,12 @@ Game::Game(const Settings& settings) : c_settings{settings}
     check(m_grid.IsValid());
     m_snake = MakeShared<Snake>(settings.snake);
     check(m_snake.IsValid());
+    m_food = MakeShared<Food>();
+    check(m_food.IsValid());
 
-    updateGrid();
+    // Pass the whole snake with the head to avoid possible generation of the food in place of the snake's head
+    m_grid->update(m_snake->links().GetHead(), CellType::Snake);
+    generateFood();
 }
 
 void Game::update(float deltaSeconds, const Input& input)
@@ -28,18 +33,27 @@ void Game::update(float deltaSeconds, const Input& input)
     if (died())
     {
         m_gameOver = true;
-        UE_LOG(LogGame, Display, TEXT("Game Over!"))
+        dispatchGameEvent(GameEvent::GameOver);
+        return;
     }
+
+    if (foodTaken())
+    {
+        ++m_score;
+        m_snake->increase();
+        generateFood();
+        dispatchGameEvent(GameEvent::FoodTaken);
+    }
+}
+
+void SnakeGame::Game::subscribeOnGameEvent(const GameEventCallback& callback)
+{
+    m_gameEventCallback = callback;
 }
 
 void Game::moveSnake(const Input& input)
 {
     m_snake->move(input);
-    updateGrid();
-}
-
-void Game::updateGrid()
-{
     m_grid->update(m_snake->body(), CellType::Snake);
 }
 
@@ -59,4 +73,31 @@ bool Game::died() const
 {
     return m_grid->hitTest(m_snake->head(), CellType::Wall) ||    //
            m_grid->hitTest(m_snake->head(), CellType::Snake);
+}
+
+bool Game::foodTaken() const
+{
+    return m_grid->hitTest(m_snake->head(), CellType::Food);
+}
+
+void Game::generateFood()
+{
+    if (Position newPosition; m_grid->randomEmptyPosition(newPosition))
+    {
+        m_food->setPosition(newPosition);
+        m_grid->update(m_food->position(), CellType::Food);
+    }
+    else
+    {
+        m_gameOver = true;
+        dispatchGameEvent(GameEvent::GameCompleted);
+    }
+}
+
+void SnakeGame::Game::dispatchGameEvent(GameEvent event)
+{
+    if (m_gameEventCallback)
+    {
+        m_gameEventCallback(event);
+    }
 }

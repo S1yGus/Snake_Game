@@ -63,6 +63,8 @@ void FWorldGrid::Define()
 
                         TestTrueExpr(GridStaticMeshComp->GetRelativeLocation().Equals(0.5 * FVector{GridWorldHeight, GridWorldWidth, -BoxSize.Z}));
                         TestTrueExpr(GridStaticMeshComp->GetRelativeScale3D().Equals(FVector{GridWorldHeight / BoxSize.X, GridWorldWidth / BoxSize.Y, 1.0}));
+
+                        SpecCloseLevel(World);
                     });
                  It("ColorsShouldBeSetupCorrectly",
                     [this]()
@@ -85,6 +87,8 @@ void FWorldGrid::Define()
 
                         Material->GetVectorParameterValue(FName{"LinesColor"}, ColorToCheck);
                         TestTrueExpr(ColorToCheck.Equals(ColorsSet.GridLinesColor));
+
+                        SpecCloseLevel(World);
                     });
              });
 }

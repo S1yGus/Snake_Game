@@ -40,21 +40,26 @@ void FCoreGame::Define()
                     {
                         TestTrueExpr(CoreGame->snake().IsValid());
                     });
+                 It("FoodMustExist",
+                    [this]()
+                    {
+                        TestTrueExpr(CoreGame->food().IsValid());
+                    });
                  It("Update.SnakeShouldn'tMoveWhenDeltaLessThanGameSpeed",
                     [this]()
                     {
-                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Empty));
+                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Snake));
                         TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition - Position{1, 0}, CellType::Snake));
 
                         CoreGame->update(GameSettings.gameSpeed / 2, Input::defaultInput);
 
-                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Empty));
+                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Snake));
                         TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition - Position{1, 0}, CellType::Snake));
                     });
                  It("Update.SnakeShouldMoveWhenDeltaEqualGameSpeed",
                     [this]()
                     {
-                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Empty));
+                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Snake));
                         TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition - Position{1, 0}, CellType::Snake));
 
                         CoreGame->update(GameSettings.gameSpeed, Input::defaultInput);
@@ -65,12 +70,12 @@ void FCoreGame::Define()
                  It("Update.SnakeShouldMoveWhenDeltaAccumulates",
                     [this]()
                     {
-                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Empty));
+                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Snake));
                         TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition - Position{1, 0}, CellType::Snake));
 
                         CoreGame->update(GameSettings.gameSpeed / 2, Input::defaultInput);
 
-                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Empty));
+                        TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition, CellType::Snake));
                         TestTrueExpr(CoreGame->grid()->hitTest(SnakeStartPosition - Position{1, 0}, CellType::Snake));
 
                         CoreGame->update(GameSettings.gameSpeed / 2, Input::defaultInput);
