@@ -46,8 +46,6 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     TSubclassOf<ASG_SnakeLink> SnakeBodyClass;
 
-    virtual void BeginPlay() override;
-
 private:
 #pragma region With metadata
     UPROPERTY()
@@ -57,6 +55,8 @@ private:
     TWeakPtr<SnakeGame::Snake> CoreSnake;
     uint32 CellSize;
     SnakeGame::Dim GridSize;
+    FLinearColor LinkColor;
 
-    FVector PosToVector(const SnakeGame::Position& Position);
+    void EmptyLinks();
+    void SpwnLinks();
 };

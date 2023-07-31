@@ -42,6 +42,18 @@ public:
      */
     void update(float deltaSeconds, const Input& input);
 
+    /**
+     * Returns the current game score
+     * @return uint32 Current game score
+     */
+    uint32 score() const { return m_score; }
+
+    /**
+     * Sets the game event callback function
+     * @param callback Callback function
+     */
+    void subscribeOnGameEvent(const GameEventCallback& callback);
+
 private:
     const Settings c_settings;
     TSharedPtr<Grid> m_grid;
@@ -50,12 +62,14 @@ private:
     float m_pastSeconds{0};
     bool m_gameOver{false};
     uint32 m_score{0};
+    GameEventCallback m_gameEventCallback;
 
     void moveSnake(const Input& input);
     bool updateTime(float deltaSeconds);
     bool died() const;
     bool foodTaken() const;
     void generateFood();
+    void dispatchGameEvent(GameEvent event);
 };
 
 }    // namespace SnakeGame

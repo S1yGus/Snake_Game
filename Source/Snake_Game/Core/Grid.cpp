@@ -16,11 +16,7 @@ Grid::Grid(const Dim& dim) : c_size{dim.width + 2, dim.height + 2}
 
 void Grid::update(const SnakeNode* link, CellType cellType)
 {
-    if (!m_indexesByType.Contains(cellType))
-    {
-        m_indexesByType.Add(cellType, {});
-    }
-
+    checkCellType(cellType);
     clearCellsByType(cellType);
 
     while (link)
@@ -36,11 +32,7 @@ void Grid::update(const SnakeNode* link, CellType cellType)
 
 void Grid::update(const Position& position, CellType cellType)
 {
-    if (!m_indexesByType.Contains(cellType))
-    {
-        m_indexesByType.Add(cellType, {});
-    }
-
+    checkCellType(cellType);
     clearCellsByType(cellType);
 
     updateInternal(position, cellType);
@@ -98,6 +90,14 @@ void Grid::initWalls()
     }
 }
 
+void SnakeGame::Grid::checkCellType(CellType cellType)
+{
+    if (!m_indexesByType.Contains(cellType))
+    {
+        m_indexesByType.Add(cellType, {});
+    }
+}
+
 void Grid::clearCellsByType(CellType cellType)
 {
     for (auto index : m_indexesByType[cellType])
@@ -114,7 +114,7 @@ void Grid::updateInternal(const Position& position, CellType cellType)
     m_indexesByType[cellType].Add(index);
 }
 
-void Grid::printDebug()
+void Grid::printDebug() const
 {
     for (uint32 y = 0; y != c_size.height; ++y)
     {

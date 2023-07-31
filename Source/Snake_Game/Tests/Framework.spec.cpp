@@ -66,6 +66,8 @@ void FFramework::Define()
 
                         const auto* GameMode = World->GetAuthGameMode<ASG_GameMode>();
                         TestNotNull("GameMode must be setup correctly", GameMode);
+
+                        SpecCloseLevel(World);
                     });
              });
 }

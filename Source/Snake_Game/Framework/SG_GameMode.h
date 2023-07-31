@@ -11,6 +11,7 @@
 
 class ASG_Grid;
 class ASG_Snake;
+class ASG_Food;
 class UDataTable;
 class AExponentialHeightFog;
 class UInputAction;
@@ -47,6 +48,9 @@ protected:
     TSubclassOf<ASG_Snake> SnakeVisualClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "Design")
+    TSubclassOf<ASG_Food> FoodVisualClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Design")
     UDataTable* SnakeColorsTable;
 
     UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
@@ -70,6 +74,9 @@ private:
     ASG_Snake* SnakeView;
 
     UPROPERTY()
+    ASG_Food* FoodView;
+
+    UPROPERTY()
     AExponentialHeightFog* Fog;
 
     UFUNCTION(Exec, Category = "Console command")
@@ -89,4 +96,6 @@ private:
     void OnMoveForward(const FInputActionValue& Value);
     void OnMoveRight(const FInputActionValue& Value);
     void OnReset(const FInputActionValue& Value);
+
+    void SubscribeOnGameEvent();
 };

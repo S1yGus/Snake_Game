@@ -61,9 +61,10 @@ private:
     TMap<CellType, TArray<uint32>> m_indexesByType;
 
     void initWalls();
+    FORCEINLINE void checkCellType(CellType cellType);
     void clearCellsByType(CellType cellType);
     void updateInternal(const Position& position, CellType cellType);
-    void printDebug();
+    void printDebug() const;
 
     FORCEINLINE uint32 posToIndex(uint32 x, uint32 y) const;
     FORCEINLINE uint32 posToIndex(const Position& position) const;

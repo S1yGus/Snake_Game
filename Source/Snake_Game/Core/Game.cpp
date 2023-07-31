@@ -33,11 +33,7 @@ void Game::update(float deltaSeconds, const Input& input)
     if (died())
     {
         m_gameOver = true;
-
-#if !UE_BUILD_SHIPPING
-        UE_LOG(LogGame, Display, TEXT("Game Over!"));
-        UE_LOG(LogGame, Display, TEXT("Score: %d"), m_score);
-#endif
+        dispatchGameEvent(GameEvent::GameOver);
         return;
     }
 
@@ -46,7 +42,13 @@ void Game::update(float deltaSeconds, const Input& input)
         ++m_score;
         m_snake->increase();
         generateFood();
+        dispatchGameEvent(GameEvent::FoodTaken);
     }
+}
+
+void SnakeGame::Game::subscribeOnGameEvent(const GameEventCallback& callback)
+{
+    m_gameEventCallback = callback;
 }
 
 void Game::moveSnake(const Input& input)
@@ -88,10 +90,14 @@ void Game::generateFood()
     else
     {
         m_gameOver = true;
+        dispatchGameEvent(GameEvent::GameCompleted);
+    }
+}
 
-#if !UE_BUILD_SHIPPING
-        UE_LOG(LogGame, Display, TEXT("Game Completed!"));
-        UE_LOG(LogGame, Display, TEXT("Score: %d"), m_score);
-#endif
+void SnakeGame::Game::dispatchGameEvent(GameEvent event)
+{
+    if (m_gameEventCallback)
+    {
+        m_gameEventCallback(event);
     }
 }
