@@ -39,6 +39,11 @@ public:
      */
     void UpdateColors(const FSnakeColorsTableRow& ColorsSet);
 
+    /**
+     * Reproduces the teardown effect for each link
+     */
+    void Teardown();
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     TSubclassOf<ASG_SnakeLink> SnakeHeadClass;

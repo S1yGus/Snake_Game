@@ -2,6 +2,8 @@
 
 #include "World/SG_BaseCellObject.h"
 #include "Components/StaticMeshComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 static constexpr float ScalingTimerRate = 0.016f;
 
@@ -29,9 +31,11 @@ void ASG_BaseCellObject::UpdateScale(uint32 CellSize)
 
 void ASG_BaseCellObject::UpdateColor(const FLinearColor& Color)
 {
+    ObjectColor = Color;
+
     if (auto* Material = Mesh->CreateAndSetMaterialInstanceDynamic(0))
     {
-        Material->SetVectorParameterValue(ColorParameterName, Color);
+        Material->SetVectorParameterValue(MaterialColorParameterName, Color);
     }
 }
 
@@ -39,6 +43,15 @@ void ASG_BaseCellObject::RestartScaling()
 {
     Mesh->SetRelativeScale3D(FVector::ZeroVector);
     GetWorldTimerManager().SetTimer(ScaleTimerHandle, this, &ThisClass::OnChangingScale, ScalingTimerRate, true);
+}
+
+void ASG_BaseCellObject::Teardown()
+{
+    if (auto* NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, TeardownEffect, GetActorLocation()))
+    {
+        NiagaraComponent->SetVariableLinearColor(EffectColorParameterName, ObjectColor);
+        NiagaraComponent->CastShadow = true;
+    }
 }
 
 void ASG_BaseCellObject::BeginPlay()
