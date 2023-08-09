@@ -7,6 +7,7 @@
 #include "SG_BaseCellObject.generated.h"
 
 class UStaticMeshComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class SNAKE_GAME_API ASG_BaseCellObject : public AActor
@@ -33,6 +34,11 @@ public:
      */
     void RestartScaling();
 
+    /**
+     * Reproduces the teardown effect
+     */
+    virtual void Teardown();
+
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")
     USceneComponent* Origin;
@@ -41,16 +47,23 @@ protected:
     UStaticMeshComponent* Mesh;
 
     UPROPERTY(EditDefaultsOnly, Category = "Materials")
-    FName ColorParameterName{"Color"};
+    FName MaterialColorParameterName{"Color"};
 
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
-    float ScaleInterpSpeed{5.0f};
+    float ScaleInterpSpeed{1.0f};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Effects")
+    UNiagaraSystem* TeardownEffect;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Effects")
+    FName EffectColorParameterName{"Color"};
 
     virtual void BeginPlay() override;
 
 private:
     FVector TargetScale;
     FTimerHandle ScaleTimerHandle;
+    FLinearColor ObjectColor;
 
     void OnChangingScale();
 };

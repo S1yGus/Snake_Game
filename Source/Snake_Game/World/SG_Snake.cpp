@@ -69,6 +69,14 @@ void ASG_Snake::UpdateColors(const FSnakeColorsTableRow& ColorsSet)
     LinkColor = ColorsSet.SnakeBodyColor;
 }
 
+void ASG_Snake::Teardown()
+{
+    for (auto* Link : Links)
+    {
+        Link->Teardown();
+    }
+}
+
 void ASG_Snake::EmptyLinks()
 {
     for (auto* Link : Links)

@@ -172,6 +172,7 @@ void ASG_GameMode::OnReset(const FInputActionValue& Value)
     GridView->SetModel(CoreGame->grid(), CellSize);
     SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
     FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridView->GetActorLocation());
+    FoodView->RestartScaling();
     SnakeInput = Input::defaultInput;
     NextColor();
 }
@@ -184,6 +185,7 @@ void ASG_GameMode::SubscribeOnGameEvent()
             switch (Event)
             {
                 case GameEvent::GameOver:
+                    SnakeView->Teardown();
 #if !UE_BUILD_SHIPPING
                     UE_LOG(LogSnakeGameMode, Display, TEXT("Game Over!"));
                     UE_LOG(LogSnakeGameMode, Display, TEXT("Score: %d"), CoreGame->score());
@@ -197,6 +199,7 @@ void ASG_GameMode::SubscribeOnGameEvent()
                     break;
                 case GameEvent::FoodTaken:
                     FoodView->RestartScaling();
+                    FoodView->Teardown();
                     break;
                 default:
                     break;
