@@ -11,7 +11,7 @@ namespace SnakeGame
 class Grid
 {
 public:
-    Grid(const Dim& size);
+    Grid(const Dim& size, const TSharedPtr<IPositionRandomizer>& positionRandomizer = MakeShared<PositionRandomizer>());
 
     /**
      * Returns grid size including walls (width + 2; height + 2)
@@ -46,7 +46,7 @@ public:
      * @param[out] position Position on the grid
      * @return bool True if empty position exists (if position doesn't exist then snake body fills whole grid)
      */
-    UE_NODISCARD bool randomEmptyPosition(Position& position) const;
+    TOptional<Position> randomEmptyPosition() const;
 
     /**
      * Returns center position in grid (walls included)
@@ -57,6 +57,7 @@ public:
 
 private:
     const Dim c_size;
+    TSharedPtr<IPositionRandomizer> m_positionRandomizer;
     TArray<CellType> m_cells;
     TMap<CellType, TArray<uint32>> m_indexesByType;
 
@@ -68,7 +69,6 @@ private:
 
     FORCEINLINE uint32 posToIndex(uint32 x, uint32 y) const;
     FORCEINLINE uint32 posToIndex(const Position& position) const;
-    FORCEINLINE Position indexToPos(uint32 index) const;
 };
 
 }    // namespace SnakeGame
