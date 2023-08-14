@@ -116,7 +116,7 @@ void ASG_GameMode::FindFog()
     Fog = Cast<AExponentialHeightFog>(Fogs[0]);
 }
 
-SnakeGame::Settings ASG_GameMode::MakeSettings() const
+Settings ASG_GameMode::MakeSettings() const
 {
     checkf(SnakeDefaultSize <= GridSize.X / 2, TEXT("Default snake is too long!"));
     return {.gridSize{GridSize.X, GridSize.Y},    //
@@ -172,6 +172,7 @@ void ASG_GameMode::OnReset(const FInputActionValue& Value)
     GridView->SetModel(CoreGame->grid(), CellSize);
     SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
     FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridView->GetActorLocation());
+    FoodView->SetActorHiddenInGame(false);
     FoodView->RestartScaling();
     SnakeInput = Input::defaultInput;
     NextColor();
@@ -186,6 +187,8 @@ void ASG_GameMode::SubscribeOnGameEvent()
             {
                 case GameEvent::GameOver:
                     SnakeView->Teardown();
+                    FoodView->Teardown();
+                    FoodView->SetActorHiddenInGame(true);
 #if !UE_BUILD_SHIPPING
                     UE_LOG(LogSnakeGameMode, Display, TEXT("Game Over!"));
                     UE_LOG(LogSnakeGameMode, Display, TEXT("Score: %d"), CoreGame->score());
@@ -198,8 +201,8 @@ void ASG_GameMode::SubscribeOnGameEvent()
 #endif
                     break;
                 case GameEvent::FoodTaken:
-                    FoodView->RestartScaling();
                     FoodView->Teardown();
+                    FoodView->RestartScaling();
                     break;
                 default:
                     break;

@@ -106,11 +106,10 @@ void FCoreGrid::Define()
                         Snake.AddTail({2, 1});
                         CoreGrid->update(Snake.GetHead(), CellType::Snake);
 
-                        Position FoundPosition;
-                        const bool bFound = CoreGrid->randomEmptyPosition(FoundPosition);
+                        TOptional<Position> FoundPosition = CoreGrid->randomEmptyPosition();
 
-                        TestTrueExpr(bFound);
-                        TestTrueExpr(FoundPosition == Position(1, 1));
+                        TestTrueExpr(FoundPosition.IsSet());
+                        TestTrueExpr(*FoundPosition == Position(1, 1));
                     });
                  It("EmptyRandomPositionCan'tBeFound",
                     [this]()
@@ -122,10 +121,9 @@ void FCoreGrid::Define()
                         Snake.AddTail({2, 1});
                         CoreGrid->update(Snake.GetHead(), CellType::Snake);
 
-                        Position FoundPosition;
-                        const bool bFound = CoreGrid->randomEmptyPosition(FoundPosition);
+                        TOptional<Position> FoundPosition = CoreGrid->randomEmptyPosition();
 
-                        TestTrueExpr(!bFound);
+                        TestTrueExpr(!FoundPosition.IsSet());
                     });
              });
 }

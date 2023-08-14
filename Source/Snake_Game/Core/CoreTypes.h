@@ -52,6 +52,22 @@ struct Position
     FORCEINLINE bool operator==(const Position& rhs) const { return x == rhs.x && y == rhs.y; }
 };
 
+class IPositionRandomizer
+{
+public:
+    virtual ~IPositionRandomizer() = default;
+    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, uint32 width) const = 0;
+};
+
+class PositionRandomizer : public IPositionRandomizer
+{
+public:
+    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, uint32 width) const override;
+
+private:
+    FORCEINLINE Position indexToPos(uint32 index, uint32 width) const;
+};
+
 struct Settings
 {
     Dim gridSize;
@@ -61,6 +77,7 @@ struct Settings
         uint32 defaultSize;
         Position startPosition;
     } snake;
+    TSharedPtr<IPositionRandomizer> positionRandomizer = MakeShared<PositionRandomizer>();
 };
 
 using SnakeList = TDoubleLinkedList<Position>;

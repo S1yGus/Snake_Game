@@ -11,7 +11,7 @@ using namespace SnakeGame;
 
 Game::Game(const Settings& settings) : c_settings{settings}
 {
-    m_grid = MakeShared<Grid>(settings.gridSize);
+    m_grid = MakeShared<Grid>(settings.gridSize, settings.positionRandomizer);
     check(m_grid.IsValid());
     m_snake = MakeShared<Snake>(settings.snake);
     check(m_snake.IsValid());
@@ -82,9 +82,9 @@ bool Game::foodTaken() const
 
 void Game::generateFood()
 {
-    if (Position newPosition; m_grid->randomEmptyPosition(newPosition))
+    if (TOptional<Position> newPosition = m_grid->randomEmptyPosition(); newPosition.IsSet())
     {
-        m_food->setPosition(newPosition);
+        m_food->setPosition(*newPosition);
         m_grid->update(m_food->position(), CellType::Food);
     }
     else

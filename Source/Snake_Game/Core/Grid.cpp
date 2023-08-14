@@ -6,7 +6,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogGrid, All, All)
 
 using namespace SnakeGame;
 
-Grid::Grid(const Dim& dim) : c_size{dim.width + 2, dim.height + 2}
+Grid::Grid(const Dim& dim, const TSharedPtr<IPositionRandomizer>& positionRandomizer) : c_size{dim.width + 2, dim.height + 2}, m_positionRandomizer{positionRandomizer}
 {
     m_cells.Init(CellType::Empty, c_size.width * c_size.height);
 
@@ -47,28 +47,14 @@ bool Grid::hitTest(const Position& position, CellType cellType) const
     return m_cells[posToIndex(position)] == cellType;
 }
 
-bool Grid::randomEmptyPosition(Position& position) const
+TOptional<Position> Grid::randomEmptyPosition() const
 {
-    const auto index = FMath::RandHelper(m_cells.Num());
-    for (uint32 i = index; i != m_cells.Num(); ++i)
+    if (m_positionRandomizer.IsValid())
     {
-        if (m_cells[i] == CellType::Empty)
-        {
-            position = indexToPos(i);
-            return true;
-        }
+        return m_positionRandomizer->randomEmptyPosition(m_cells, c_size.width);
     }
 
-    for (uint32 i = 0; i != index; ++i)
-    {
-        if (m_cells[i] == CellType::Empty)
-        {
-            position = indexToPos(i);
-            return true;
-        }
-    }
-
-    return false;
+    return NullOpt;
 }
 
 Position Grid::center(const Dim& girdSize)
@@ -90,7 +76,7 @@ void Grid::initWalls()
     }
 }
 
-void SnakeGame::Grid::checkCellType(CellType cellType)
+void Grid::checkCellType(CellType cellType)
 {
     if (!m_indexesByType.Contains(cellType))
     {
@@ -153,9 +139,4 @@ uint32 Grid::posToIndex(uint32 x, uint32 y) const
 uint32 Grid::posToIndex(const Position& position) const
 {
     return posToIndex(position.x, position.y);
-}
-
-Position Grid::indexToPos(uint32 index) const
-{
-    return {index % c_size.width, static_cast<uint32>(index / c_size.width)};
 }
