@@ -49,6 +49,12 @@ public:
     uint32 score() const { return m_score; }
 
     /**
+     * Returns the current game time
+     * @return float Current game time
+     */
+    float gameTime() const { return m_gameTime; }
+
+    /**
      * Sets the game event callback function
      * @param callback Callback function
      */
@@ -59,10 +65,11 @@ private:
     TSharedPtr<Grid> m_grid;
     TSharedPtr<Snake> m_snake;
     TSharedPtr<Food> m_food;
+    float m_gameTime{0};
     float m_pastSeconds{0};
     bool m_gameOver{false};
     uint32 m_score{0};
-    GameEventCallback m_gameEventCallback;
+    TArray<GameEventCallback> m_gameEventCallbacks;
 
     void moveSnake(const Input& input);
     bool updateTime(float deltaSeconds);

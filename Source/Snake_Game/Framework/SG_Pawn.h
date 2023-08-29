@@ -27,10 +27,10 @@ public:
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")
-    USceneComponent* Origin;
+    TObjectPtr<USceneComponent> Origin;
 
     UPROPERTY(VisibleAnywhere, Category = "Components")
-    UCameraComponent* Camera;
+    TObjectPtr<UCameraComponent> Camera;
 
     UPROPERTY(VisibleAnywhere, Category = "Design", Meta = (ClampMin = "0"))
     int32 GridMargin{2};

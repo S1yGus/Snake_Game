@@ -16,6 +16,7 @@ class UDataTable;
 class AExponentialHeightFog;
 class UInputAction;
 class UInputMappingContext;
+class ASG_HUD;
 
 UCLASS()
 class SNAKE_GAME_API ASG_GameMode : public AGameModeBase
@@ -51,7 +52,7 @@ protected:
     TSubclassOf<ASG_Food> FoodVisualClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "Design")
-    UDataTable* SnakeColorsTable;
+    TObjectPtr<UDataTable> SnakeColorsTable;
 
     UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
     TObjectPtr<UInputAction> MoveForwardInputAction;
@@ -68,22 +69,25 @@ protected:
 private:
 #pragma region With metadata
     UPROPERTY()
-    ASG_Grid* GridView;
+    TObjectPtr<ASG_Grid> GridView;
 
     UPROPERTY()
-    ASG_Snake* SnakeView;
+    TObjectPtr<ASG_Snake> SnakeView;
 
     UPROPERTY()
-    ASG_Food* FoodView;
+    TObjectPtr<ASG_Food> FoodView;
 
     UPROPERTY()
-    AExponentialHeightFog* Fog;
+    TObjectPtr<AExponentialHeightFog> Fog;
+
+    UPROPERTY()
+    TObjectPtr<ASG_HUD> HUD;
 
     UFUNCTION(Exec, Category = "Console command")
     void NextColor();
 #pragma endregion Variables and functions with Unreal Header Tool metadata
 
-    TUniquePtr<SnakeGame::Game> CoreGame;
+    TSharedPtr<SnakeGame::Game> CoreGame;
     uint32 ColorsTableIndex{0};
     SnakeGame::Input SnakeInput{SnakeGame::Input::defaultInput};
 

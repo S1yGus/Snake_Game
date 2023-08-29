@@ -40,10 +40,10 @@ public:
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")
-    USceneComponent* Origin;
+    TObjectPtr<USceneComponent> Origin;
 
     UPROPERTY(VisibleAnywhere, Category = "Components")
-    UStaticMeshComponent* GridMesh;
+    TObjectPtr<UStaticMeshComponent> GridMesh;
 
     UPROPERTY(EditDefaultsOnly, Category = "Materials")
     FName GirdSizeParameterName{"GridSize"};
@@ -60,7 +60,7 @@ protected:
 private:
 #pragma region With metadata
     UPROPERTY()
-    UMaterialInstanceDynamic* MaterialInstance;
+    TObjectPtr<UMaterialInstanceDynamic> MaterialInstance;
 #pragma endregion Variables with Unreal Header Tool metadata
 
     SnakeGame::Dim GridSize;

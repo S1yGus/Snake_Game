@@ -16,6 +16,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "World/SG_WorldUtils.h"
+#include "UI/SG_HUD.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSnakeGameMode, All, All)
 
@@ -24,6 +25,9 @@ using namespace SnakeGame;
 ASG_GameMode::ASG_GameMode()
 {
     PrimaryActorTick.bCanEverTick = true;
+
+    HUDClass = ASG_HUD::StaticClass();
+    DefaultPawnClass = ASG_GameMode::StaticClass();
 }
 
 void ASG_GameMode::StartPlay()
@@ -34,7 +38,7 @@ void ASG_GameMode::StartPlay()
         return;
 
     // Init game model
-    CoreGame = MakeUnique<Game>(MakeSettings());
+    CoreGame = MakeShared<Game>(MakeSettings());
     check(CoreGame.IsValid());
     SubscribeOnGameEvent();
 
@@ -59,14 +63,6 @@ void ASG_GameMode::StartPlay()
     FoodView->UpdateScale(CellSize);
     FoodView->FinishSpawning(FoodTransform);
 
-    // Update colors
-    check(SnakeColorsTable);
-    const auto RowsAmount = SnakeColorsTable->GetRowNames().Num();
-    check(RowsAmount != 0);
-    ColorsTableIndex = FMath::RandHelper(RowsAmount);
-    FindFog();
-    UpdateColors();
-
     // Init pawn
     if (const auto* PC = GetWorld()->GetFirstPlayerController())
     {
@@ -74,7 +70,21 @@ void ASG_GameMode::StartPlay()
         {
             Pawn->UpdateLocation(CoreGame->grid()->size(), CellSize, GridOrigin);
         }
+
+        // Init HUD
+        HUD = PC->GetHUD<ASG_HUD>();
+        check(HUD);
+        HUD->SetModel(CoreGame);
+        HUD->SetKeyNames(Utils::GetActionKeyName(SnakeInputMapping, ResetInputAction));
     }
+
+    // Update colors
+    check(SnakeColorsTable);
+    const int32 RowsAmount = SnakeColorsTable->GetRowNames().Num();
+    check(RowsAmount != 0);
+    ColorsTableIndex = FMath::RandHelper(RowsAmount);
+    FindFog();
+    UpdateColors();
 
     SetupInput();
 }
@@ -166,14 +176,14 @@ void ASG_GameMode::OnMoveRight(const FInputActionValue& Value)
 
 void ASG_GameMode::OnReset(const FInputActionValue& Value)
 {
-    CoreGame.Reset(new Game(MakeSettings()));
+    CoreGame = MakeShared<Game>(MakeSettings());
     check(CoreGame.IsValid());
     SubscribeOnGameEvent();
     GridView->SetModel(CoreGame->grid(), CellSize);
     SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
     FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridView->GetActorLocation());
-    FoodView->SetActorHiddenInGame(false);
     FoodView->RestartScaling();
+    HUD->SetModel(CoreGame);
     SnakeInput = Input::defaultInput;
     NextColor();
 }
