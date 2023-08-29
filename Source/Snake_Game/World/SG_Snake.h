@@ -54,7 +54,7 @@ protected:
 private:
 #pragma region With metadata
     UPROPERTY()
-    TArray<ASG_SnakeLink*> Links;
+    TArray<TObjectPtr<ASG_SnakeLink>> Links;
 #pragma endregion Variables with Unreal Header Tool metadata
 
     TWeakPtr<SnakeGame::Snake> CoreSnake;

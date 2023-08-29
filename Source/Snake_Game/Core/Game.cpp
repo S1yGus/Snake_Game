@@ -48,7 +48,7 @@ void Game::update(float deltaSeconds, const Input& input)
 
 void SnakeGame::Game::subscribeOnGameEvent(const GameEventCallback& callback)
 {
-    m_gameEventCallback = callback;
+    m_gameEventCallbacks.Add(callback);
 }
 
 void Game::moveSnake(const Input& input)
@@ -59,6 +59,7 @@ void Game::moveSnake(const Input& input)
 
 bool Game::updateTime(float deltaSeconds)
 {
+    m_gameTime += deltaSeconds;
     m_pastSeconds += deltaSeconds;
     if (m_pastSeconds >= c_settings.gameSpeed)
     {
@@ -96,8 +97,11 @@ void Game::generateFood()
 
 void SnakeGame::Game::dispatchGameEvent(GameEvent event)
 {
-    if (m_gameEventCallback)
+    for (auto& callback : m_gameEventCallbacks)
     {
-        m_gameEventCallback(event);
+        if (callback)
+        {
+            callback(event);
+        }
     }
 }

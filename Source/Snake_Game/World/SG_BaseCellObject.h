@@ -41,10 +41,10 @@ public:
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")
-    USceneComponent* Origin;
+    TObjectPtr<USceneComponent> Origin;
 
     UPROPERTY(VisibleAnywhere, Category = "Components")
-    UStaticMeshComponent* Mesh;
+    TObjectPtr<UStaticMeshComponent> Mesh;
 
     UPROPERTY(EditDefaultsOnly, Category = "Materials")
     FName MaterialColorParameterName{"Color"};
@@ -53,7 +53,7 @@ protected:
     float ScaleInterpSpeed{1.0f};
 
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
-    UNiagaraSystem* TeardownEffect;
+    TObjectPtr<UNiagaraSystem> TeardownEffect;
 
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
     FName EffectColorParameterName{"Color"};

@@ -24,7 +24,7 @@ void ASG_Snake::Tick(float DeltaTime)
         return;
 
     auto* LinkModel = CoreSnake.Pin()->links().GetHead();
-    for (auto* LinkView : Links)
+    for (auto LinkView : Links)
     {
         LinkView->SetActorLocation(GetActorLocation() + Utils::PosToVector(LinkModel->GetValue(), GridSize, CellSize));
         LinkModel = LinkModel->GetNextNode();
@@ -60,7 +60,7 @@ void ASG_Snake::SetModel(const TSharedPtr<Snake>& Snake, uint32 InCellSize, cons
 void ASG_Snake::UpdateColors(const FSnakeColorsTableRow& ColorsSet)
 {
     uint32 i{0};
-    for (auto* Link : Links)
+    for (auto Link : Links)
     {
         const bool bIsHead = i++ == 0;
         Link->UpdateColor(bIsHead ? ColorsSet.SnakeHeadColor : ColorsSet.SnakeBodyColor);
@@ -71,7 +71,7 @@ void ASG_Snake::UpdateColors(const FSnakeColorsTableRow& ColorsSet)
 
 void ASG_Snake::Teardown()
 {
-    for (auto* Link : Links)
+    for (auto Link : Links)
     {
         Link->Teardown();
     }
@@ -79,7 +79,7 @@ void ASG_Snake::Teardown()
 
 void ASG_Snake::EmptyLinks()
 {
-    for (auto* Link : Links)
+    for (auto Link : Links)
     {
         Link->Destroy();
     }

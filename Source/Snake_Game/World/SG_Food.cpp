@@ -34,4 +34,6 @@ void ASG_Food::SetModel(const TSharedPtr<Food>& Food, uint32 InCellSize, const D
     CellSize = InCellSize;
     GridSize = InGridSize;
     GridOrigin = InGridOrigin;
+
+    SetActorHiddenInGame(false);
 }
