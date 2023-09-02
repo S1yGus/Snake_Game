@@ -23,7 +23,7 @@ public:
     virtual void Tick(float DeltaTime) override;
 
     /**
-     * Set core model to be observed by the food world actor
+     * Sets core model to be observed by the food world actor
      * @param Food Model object
      * @param InCellSize World size of the cell
      * @param InGridSize Grid dimensions

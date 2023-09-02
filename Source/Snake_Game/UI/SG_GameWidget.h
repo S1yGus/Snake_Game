@@ -11,6 +11,10 @@ class SNAKE_GAME_API USG_GameWidget : public USG_BaseGameWidget
 {
     GENERATED_BODY()
 public:
+    /**
+     * Sets the time value within the widget in seconds
+     * @param Seconds Time in seconds
+     */
     void SetTime(float Seconds);
 
 protected:

@@ -42,9 +42,7 @@ void ASG_Pawn::UpdateLocation(const Dim& InGridSize, uint32 InCellSize, const FT
         Viewport->ViewportResizedEvent.Remove(OnViewportResizedHandle);
         Viewport->ViewportResizedEvent.AddUObject(this, &ThisClass::OnViewportResized);
 
-#if WITH_EDITOR
         OnViewportResized(Viewport, 0);
-#endif
     }
 }
 

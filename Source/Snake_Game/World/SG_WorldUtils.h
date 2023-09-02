@@ -18,6 +18,7 @@ public:
     static FText FormatScore(uint32 Score);
     static FText FormatTime(float Seconds);
     static FString GetActionKeyName(TObjectPtr<const UInputMappingContext> MappingContext, TObjectPtr<const UInputAction> Action);
+    static void SetUIInput(const UWorld* World, bool bEnabled);
 };
 
 }    // namespace SnakeGame

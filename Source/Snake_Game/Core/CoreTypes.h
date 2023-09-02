@@ -27,6 +27,8 @@ struct Dim
 {
     uint32 width;
     uint32 height;
+
+    FORCEINLINE bool operator==(const Dim& rhs) const { return width == rhs.width && height == rhs.height; }
 };
 
 struct Input
