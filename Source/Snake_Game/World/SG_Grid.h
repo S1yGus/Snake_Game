@@ -26,7 +26,7 @@ public:
     virtual void Tick(float DeltaTime) override;
 
     /**
-     * Set core model to be observed by the grid world actor
+     * Sets core model to be observed by the grid world actor
      * @param Grid Model object
      * @param InCellSize World size of the cell
      */

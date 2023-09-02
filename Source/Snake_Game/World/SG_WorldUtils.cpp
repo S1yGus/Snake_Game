@@ -32,3 +32,12 @@ FString Utils::GetActionKeyName(TObjectPtr<const UInputMappingContext> MappingCo
 
     return FoundMapping ? FoundMapping->Key.GetFName().ToString() : "";
 }
+
+void Utils::SetUIInput(const UWorld* World, bool bEnabled)
+{
+    if (auto* PC = World ? World->GetFirstPlayerController() : nullptr)
+    {
+        PC->bShowMouseCursor = bEnabled;
+        bEnabled ? PC->SetInputMode(FInputModeGameAndUI().SetHideCursorDuringCapture(false)) : PC->SetInputMode(FInputModeGameOnly());
+    }
+}

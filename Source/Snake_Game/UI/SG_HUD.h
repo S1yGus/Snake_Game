@@ -28,7 +28,16 @@ class SNAKE_GAME_API ASG_HUD : public AHUD
     GENERATED_BODY()
 
 public:
+    /**
+     * Sets core game model to be observed by the HUD
+     * @param Game Core game model object
+     */
     void SetModel(const TSharedPtr<SnakeGame::Game>& Game);
+
+    /**
+     * Sets the names for a control keys
+     * @param ResetKeyName Reset key name
+     */
     void SetKeyNames(const FString& ResetKeyName);
 
 protected:

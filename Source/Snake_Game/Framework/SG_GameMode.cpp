@@ -17,6 +17,7 @@
 #include "EnhancedInputComponent.h"
 #include "World/SG_WorldUtils.h"
 #include "UI/SG_HUD.h"
+#include "Framework/SG_GameUserSettings.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSnakeGameMode, All, All)
 
@@ -36,6 +37,18 @@ void ASG_GameMode::StartPlay()
 
     if (!GetWorld())
         return;
+
+    const auto* PC = GetWorld()->GetFirstPlayerController();
+    if (!PC)
+    {
+        UE_LOG(LogSnakeGameMode, Fatal, TEXT("Player Controller is nullptr, game aborted!"));
+    }
+
+    auto* Pawn = PC->GetPawn<ASG_Pawn>();
+    if (!Pawn)
+    {
+        UE_LOG(LogSnakeGameMode, Fatal, TEXT("Pawn is nullptr, game aborted!"));
+    }
 
     // Init game model
     CoreGame = MakeShared<Game>(MakeSettings());
@@ -64,19 +77,14 @@ void ASG_GameMode::StartPlay()
     FoodView->FinishSpawning(FoodTransform);
 
     // Init pawn
-    if (const auto* PC = GetWorld()->GetFirstPlayerController())
-    {
-        if (auto* Pawn = PC->GetPawn<ASG_Pawn>(); Pawn && CoreGame->grid().IsValid())
-        {
-            Pawn->UpdateLocation(CoreGame->grid()->size(), CellSize, GridOrigin);
-        }
+    Pawn->UpdateLocation(CoreGame->grid()->size(), CellSize, GridOrigin);
 
-        // Init HUD
-        HUD = PC->GetHUD<ASG_HUD>();
-        check(HUD);
-        HUD->SetModel(CoreGame);
-        HUD->SetKeyNames(Utils::GetActionKeyName(SnakeInputMapping, ResetInputAction));
-    }
+    // Init HUD
+    HUD = PC->GetHUD<ASG_HUD>();
+    check(HUD);
+    HUD->SetModel(CoreGame);
+    HUD->SetKeyNames(Utils::GetActionKeyName(SnakeInputMapping, ResetInputAction));
+    Utils::SetUIInput(GetWorld(), false);
 
     // Update colors
     check(SnakeColorsTable);
@@ -129,9 +137,29 @@ void ASG_GameMode::FindFog()
 Settings ASG_GameMode::MakeSettings() const
 {
     checkf(SnakeDefaultSize <= GridSize.X / 2, TEXT("Default snake is too long!"));
-    return {.gridSize{GridSize.X, GridSize.Y},    //
-            .gameSpeed{GameSpeed},                //
-            .snake{.defaultSize{SnakeDefaultSize}, .startPosition{Grid::center({GridSize.X, GridSize.Y})}}};
+
+    const auto* GameUserSettings = USG_GameUserSettings::Get();
+    if (!GameUserSettings)
+    {
+        UE_LOG(LogSnakeGameMode, Fatal, TEXT("Snake GameUserSettings not found, game aborted!"));
+    }
+
+    Settings GameSettings;
+#if WITH_EDITOR
+    if (bOverrideUserSettings)
+    {
+        GameSettings.gameSpeed = GameSpeed;
+        GameSettings.gridSize = Dim{GridSize.X, GridSize.Y};
+    }
+    else
+#endif
+    {
+        GameSettings.gameSpeed = GameUserSettings->GetCurrentSpeed();
+        GameSettings.gridSize = GameUserSettings->GetCurrentSize();
+    }
+    GameSettings.snake = {.defaultSize{SnakeDefaultSize},    //
+                          .startPosition{Grid::center({GameSettings.gridSize.width, GameSettings.gridSize.height})}};
+    return GameSettings;
 }
 
 void ASG_GameMode::SetupInput()
@@ -186,6 +214,7 @@ void ASG_GameMode::OnReset(const FInputActionValue& Value)
     HUD->SetModel(CoreGame);
     SnakeInput = Input::defaultInput;
     NextColor();
+    Utils::SetUIInput(GetWorld(), false);
 }
 
 void ASG_GameMode::SubscribeOnGameEvent()
@@ -199,6 +228,7 @@ void ASG_GameMode::SubscribeOnGameEvent()
                     SnakeView->Teardown();
                     FoodView->Teardown();
                     FoodView->SetActorHiddenInGame(true);
+                    Utils::SetUIInput(GetWorld(), true);
 #if !UE_BUILD_SHIPPING
                     UE_LOG(LogSnakeGameMode, Display, TEXT("Game Over!"));
                     UE_LOG(LogSnakeGameMode, Display, TEXT("Score: %d"), CoreGame->score());
