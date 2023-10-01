@@ -65,7 +65,7 @@ void FWorldSnake::Define()
                         SnakeModel->move(Input::defaultInput);
 
                         ADD_LATENT_AUTOMATION_COMMAND(FDelayedFunctionLatentCommand(
-                            [=]()
+                            [this]()
                             {
                                 TArray<AActor*> Links;
                                 UGameplayStatics::GetAllActorsOfClass(World, ASG_SnakeLink::StaticClass(), Links);
