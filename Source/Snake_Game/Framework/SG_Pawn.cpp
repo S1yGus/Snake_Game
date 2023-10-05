@@ -27,6 +27,8 @@ ASG_Pawn::ASG_Pawn()
     Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
     check(Camera);
     Camera->SetRelativeRotation(FRotator{-90.0, 0.0, 0.0});
+    Camera->bOverrideAspectRatioAxisConstraint = true;
+    Camera->AspectRatioAxisConstraint = EAspectRatioAxisConstraint::AspectRatio_MaintainXFOV;
     Camera->SetupAttachment(GetRootComponent());
 }
 
@@ -40,7 +42,7 @@ void ASG_Pawn::UpdateLocation(const Dim& InGridSize, uint32 InCellSize, const FT
     {
         FViewport* Viewport = GEngine->GameViewport->Viewport;
         Viewport->ViewportResizedEvent.Remove(OnViewportResizedHandle);
-        Viewport->ViewportResizedEvent.AddUObject(this, &ThisClass::OnViewportResized);
+        OnViewportResizedHandle = Viewport->ViewportResizedEvent.AddUObject(this, &ThisClass::OnViewportResized);
 
         OnViewportResized(Viewport, 0);
     }
