@@ -28,7 +28,7 @@ ASG_GameMode::ASG_GameMode()
     PrimaryActorTick.bCanEverTick = true;
 
     HUDClass = ASG_HUD::StaticClass();
-    DefaultPawnClass = ASG_GameMode::StaticClass();
+    DefaultPawnClass = ASG_Pawn::StaticClass();
 }
 
 void ASG_GameMode::StartPlay()
