@@ -29,7 +29,20 @@ public:
     virtual void StartPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
+    /**
+     * Reset current game
+     */
+    void Reset();
+
+    /**
+     * Back to main menu
+     */
+    void BackToMenu();
+
 protected:
+    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    TSoftObjectPtr<UWorld> MenuLevel;
+
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     bool bOverrideUserSettings{false};
 
@@ -67,6 +80,9 @@ protected:
     TObjectPtr<UInputAction> ResetInputAction;
 
     UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
+    TObjectPtr<UInputAction> BackToMenuInputAction;
+
+    UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
     TObjectPtr<UInputMappingContext> SnakeInputMapping;
 
 private:
@@ -102,7 +118,6 @@ private:
     void SetupInput();
     void OnMoveForward(const FInputActionValue& Value);
     void OnMoveRight(const FInputActionValue& Value);
-    void OnReset(const FInputActionValue& Value);
 
     void SubscribeOnGameEvent();
 };

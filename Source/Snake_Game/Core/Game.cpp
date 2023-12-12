@@ -46,7 +46,7 @@ void Game::update(float deltaSeconds, const Input& input)
     }
 }
 
-void SnakeGame::Game::subscribeOnGameEvent(const GameEventCallback& callback)
+void Game::subscribeOnGameEvent(const GameEventCallback& callback)
 {
     m_gameEventCallbacks.Add(callback);
 }
@@ -95,7 +95,7 @@ void Game::generateFood()
     }
 }
 
-void SnakeGame::Game::dispatchGameEvent(GameEvent event)
+void Game::dispatchGameEvent(GameEvent event)
 {
     for (auto& callback : m_gameEventCallbacks)
     {

@@ -2,6 +2,7 @@
 
 #include "Framework/SG_GameMode.h"
 #include "Framework/SG_Pawn.h"
+#include "Framework/SG_GameUserSettings.h"
 #include "Core/Grid.h"
 #include "Core/Food.h"
 #include "World/SG_WorldTypes.h"
@@ -17,7 +18,6 @@
 #include "EnhancedInputComponent.h"
 #include "World/SG_WorldUtils.h"
 #include "UI/SG_HUD.h"
-#include "Framework/SG_GameUserSettings.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSnakeGameMode, All, All)
 
@@ -83,7 +83,7 @@ void ASG_GameMode::StartPlay()
     HUD = PC->GetHUD<ASG_HUD>();
     check(HUD);
     HUD->SetModel(CoreGame);
-    HUD->SetKeyNames(Utils::GetActionKeyName(SnakeInputMapping, ResetInputAction));
+    HUD->SetKeyNames(Utils::GetActionKeyName(SnakeInputMapping, ResetInputAction), Utils::GetActionKeyName(SnakeInputMapping, BackToMenuInputAction));
     Utils::SetUIInput(GetWorld(), false);
 
     // Update colors
@@ -102,6 +102,26 @@ void ASG_GameMode::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
 
     CoreGame->update(DeltaSeconds, SnakeInput);
+}
+
+void ASG_GameMode::Reset()
+{
+    CoreGame = MakeShared<Game>(MakeSettings());
+    check(CoreGame.IsValid());
+    SubscribeOnGameEvent();
+    GridView->SetModel(CoreGame->grid(), CellSize);
+    SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
+    FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridView->GetActorLocation());
+    FoodView->RestartScaling();
+    HUD->SetModel(CoreGame);
+    SnakeInput = Input::defaultInput;
+    NextColor();
+    Utils::SetUIInput(GetWorld(), false);
+}
+
+void ASG_GameMode::BackToMenu()
+{
+    UGameplayStatics::OpenLevelBySoftObjectPtr(this, MenuLevel);
 }
 
 void ASG_GameMode::NextColor()
@@ -180,7 +200,8 @@ void ASG_GameMode::SetupInput()
             {
                 InputComponen->BindAction(MoveForwardInputAction, ETriggerEvent::Started, this, &ThisClass::OnMoveForward);
                 InputComponen->BindAction(MoveRightInputAction, ETriggerEvent::Started, this, &ThisClass::OnMoveRight);
-                InputComponen->BindAction(ResetInputAction, ETriggerEvent::Started, this, &ThisClass::OnReset);
+                InputComponen->BindAction(ResetInputAction, ETriggerEvent::Started, this, &ThisClass::Reset);
+                InputComponen->BindAction(BackToMenuInputAction, ETriggerEvent::Started, this, &ThisClass::BackToMenu);
             }
         }
     }
@@ -200,21 +221,6 @@ void ASG_GameMode::OnMoveRight(const FInputActionValue& Value)
     {
         SnakeInput = Input{static_cast<int8>(FloatValue), 0};
     }
-}
-
-void ASG_GameMode::OnReset(const FInputActionValue& Value)
-{
-    CoreGame = MakeShared<Game>(MakeSettings());
-    check(CoreGame.IsValid());
-    SubscribeOnGameEvent();
-    GridView->SetModel(CoreGame->grid(), CellSize);
-    SnakeView->SetModel(CoreGame->snake(), CellSize, CoreGame->grid()->size());
-    FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridView->GetActorLocation());
-    FoodView->RestartScaling();
-    HUD->SetModel(CoreGame);
-    SnakeInput = Input::defaultInput;
-    NextColor();
-    Utils::SetUIInput(GetWorld(), false);
 }
 
 void ASG_GameMode::SubscribeOnGameEvent()

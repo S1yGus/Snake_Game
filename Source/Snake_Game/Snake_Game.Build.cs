@@ -8,7 +8,6 @@ public class Snake_Game : ModuleRules
     public Snake_Game(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        CppStandard = CppStandardVersion.Cpp20;
 
         if (Target.ProjectDefinitions.Contains("UNOPTIMIZED_CODE"))
         {

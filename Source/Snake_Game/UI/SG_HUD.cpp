@@ -45,10 +45,10 @@ void ASG_HUD::SetModel(const TSharedPtr<Game>& Game)
         });
 }
 
-void ASG_HUD::SetKeyNames(const FString& ResetKeyName)
+void ASG_HUD::SetKeyNames(const FString& ResetKeyName, const FString& BackToMenuKeyName)
 {
-    GameWidget->SetResetKeyName(ResetKeyName);
-    GameOverWidget->SetResetKeyName(ResetKeyName);
+    GameWidget->SetKeyNames(ResetKeyName, BackToMenuKeyName);
+    GameOverWidget->SetKeyNames(ResetKeyName, BackToMenuKeyName);
 }
 
 void ASG_HUD::BeginPlay()

@@ -2,9 +2,9 @@
 
 #include "UI/SG_MenuWidget.h"
 #include "Components/Button.h"
+#include "Components/ComboBoxString.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Components/ComboBoxString.h"
 #include "Framework/SG_GameUserSettings.h"
 
 void USG_MenuWidget::NativeOnInitialized()
@@ -25,10 +25,7 @@ void USG_MenuWidget::NativeOnInitialized()
 
 void USG_MenuWidget::OnStartGame()
 {
-    if (!GameLevel.IsNull())
-    {
-        UGameplayStatics::OpenLevel(this, FName{GameLevel.GetAssetName()});
-    }
+    UGameplayStatics::OpenLevelBySoftObjectPtr(this, GameLevel);
 }
 
 void USG_MenuWidget::OnQuitGame()
