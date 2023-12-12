@@ -15,15 +15,17 @@ class SNAKE_GAME_API USG_GameOverWidget : public USG_BaseGameWidget
 
 protected:
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UButton> BackToMenuButton;
+    TObjectPtr<UButton> ResetButton;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings")
-    TSoftObjectPtr<UWorld> MenuLevel;
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UButton> BackToMenuButton;
 
     virtual void NativeOnInitialized() override;
 
 private:
 #pragma region With metadata
+    UFUNCTION()
+    void OnReset();
     UFUNCTION()
     void OnBackToMenu();
 #pragma endregion Functions with Unreal Header Tool metadata

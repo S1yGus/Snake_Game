@@ -21,15 +21,16 @@ public:
     void SetScore(uint32 Score);
 
     /**
-     * Sets the name for the reset key within the widget
+     * Sets the name for the reset and back to menu keys within the widget
      * @param ResetKeyName Reset key name
+     * @param BackToMenuKeyName Back to menu key name
      */
-    void SetResetKeyName(const FString& ResetKeyName);
+    void SetKeyNames(const FString& ResetKeyName, const FString& BackToMenuKeyName);
 
 protected:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UTextBlock> ScoreText;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UTextBlock> ResetGameText;
+    TObjectPtr<UTextBlock> HintText;
 };

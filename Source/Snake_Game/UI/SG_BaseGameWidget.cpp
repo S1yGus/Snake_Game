@@ -12,10 +12,11 @@ void USG_BaseGameWidget::SetScore(uint32 Score)
     }
 }
 
-void USG_BaseGameWidget::SetResetKeyName(const FString& ResetKeyName)
+void USG_BaseGameWidget::SetKeyNames(const FString& ResetKeyName, const FString& BackToMenuKeyName)
 {
-    if (ResetGameText)
+    if (HintText)
     {
-        ResetGameText->SetText(FText::FromString(FString::Printf(TEXT("press <%s> to reset"), *ResetKeyName.ToLower())));
+        const auto Hint = FText::FromString(FString::Printf(TEXT("press <%s> to reset, <%s> to back to menu"), *ResetKeyName.ToUpper(), *BackToMenuKeyName.ToUpper()));
+        HintText->SetText(Hint);
     }
 }

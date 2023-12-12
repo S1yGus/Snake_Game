@@ -37,8 +37,9 @@ public:
     /**
      * Sets the names for a control keys
      * @param ResetKeyName Reset key name
+     * @param BackToMenuKeyName Back to menu key name
      */
-    void SetKeyNames(const FString& ResetKeyName);
+    void SetKeyNames(const FString& ResetKeyName, const FString& BackToMenuKeyName);
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "UI")
