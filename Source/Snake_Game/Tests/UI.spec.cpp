@@ -95,7 +95,7 @@ void FSnakeUI::Define()
                         ADD_LATENT_AUTOMATION_COMMAND(FFunctionLatentCommand(
                             [this, GameOverWidget]()
                             {
-                                 const auto* ScoreText = Cast<UTextBlock>(FindWidgetByName(GameOverWidget, "ScoreText"));
+                                const auto* ScoreText = Cast<UTextBlock>(FindWidgetByName(GameOverWidget, "ScoreText"));
                                 TestTrueExpr(ScoreText != nullptr);
 
                                 const auto* HintText = Cast<UTextBlock>(FindWidgetByName(GameOverWidget, "HintText"));
