@@ -12,7 +12,9 @@ namespace SnakeGame
 class Snake;
 }
 
+class ASG_BaseCellObject;
 class ASG_SnakeLink;
+class USG_ObjectPool;
 struct FSnakeColorsTableRow;
 
 UCLASS()
@@ -40,21 +42,23 @@ public:
     void UpdateColors(const FSnakeColorsTableRow& ColorsSet);
 
     /**
-     * Reproduces the teardown effect for each link
+     * Reproduces the teardown effect for each link and add it to the pool
      */
     void Teardown();
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
-    TSubclassOf<ASG_SnakeLink> SnakeHeadClass;
+    int32 ReservedLinksNumber{10};
 
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
-    TSubclassOf<ASG_SnakeLink> SnakeBodyClass;
+    TSubclassOf<ASG_SnakeLink> SnakeLinkClass;
 
 private:
 #pragma region With metadata
     UPROPERTY()
-    TArray<TObjectPtr<ASG_SnakeLink>> Links;
+    TArray<TObjectPtr<ASG_BaseCellObject>> Links;
+    UPROPERTY()
+    TObjectPtr<USG_ObjectPool> LinkPool;
 #pragma endregion Variables with Unreal Header Tool metadata
 
     TWeakPtr<SnakeGame::Snake> CoreSnake;
@@ -62,6 +66,7 @@ private:
     SnakeGame::Dim GridSize;
     FLinearColor LinkColor;
 
+    void InitPool();
     void EmptyLinks();
     void SpwnLinks();
 };
