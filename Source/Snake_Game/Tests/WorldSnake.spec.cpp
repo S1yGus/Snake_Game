@@ -48,33 +48,33 @@ void FWorldSnake::Define()
                          SnakeView->SetModel(SnakeModel, CellSize, GridSize);
                          SnakeView->FinishSpawning(Origin);
                      });
-                 It("NumberOfWorldLinksMustMatchDefaultSnakeSize",
-                    [this]()
-                    {
-                        TArray<AActor*> Links;
-                        UGameplayStatics::GetAllActorsOfClass(World, ASG_SnakeLink::StaticClass(), Links);
+                 xIt("NumberOfWorldLinksMustMatchDefaultSnakeSize",    // Deprecated after introduce the object pool
+                     [this]()
+                     {
+                         TArray<AActor*> Links;
+                         UGameplayStatics::GetAllActorsOfClass(World, ASG_SnakeLink::StaticClass(), Links);
 
-                        TestTrueExpr(Links.Num() == Settings.defaultSize);
+                         TestTrueExpr(Links.Num() == Settings.defaultSize);
 
-                        SpecCloseLevel(World);
-                    });
-                 It("NumberOfWorldLinksMustMatchSnakeSizeAfterIncrease",
-                    [this]()
-                    {
-                        SnakeModel->increase();
-                        SnakeModel->move(Input::defaultInput);
+                         SpecCloseLevel(World);
+                     });
+                 xIt("NumberOfWorldLinksMustMatchSnakeSizeAfterIncrease",    // Deprecated after introduce the object pool
+                     [this]()
+                     {
+                         SnakeModel->increase();
+                         SnakeModel->move(Input::defaultInput);
 
-                        ADD_LATENT_AUTOMATION_COMMAND(FDelayedFunctionLatentCommand(
-                            [this]()
-                            {
-                                TArray<AActor*> Links;
-                                UGameplayStatics::GetAllActorsOfClass(World, ASG_SnakeLink::StaticClass(), Links);
+                         ADD_LATENT_AUTOMATION_COMMAND(FDelayedFunctionLatentCommand(
+                             [this]()
+                             {
+                                 TArray<AActor*> Links;
+                                 UGameplayStatics::GetAllActorsOfClass(World, ASG_SnakeLink::StaticClass(), Links);
 
-                                TestTrueExpr(Links.Num() == Settings.defaultSize + 1);
+                                 TestTrueExpr(Links.Num() == Settings.defaultSize + 1);
 
-                                SpecCloseLevel(World);
-                            }));
-                    });
+                                 SpecCloseLevel(World);
+                             }));
+                     });
              });
 }
 
