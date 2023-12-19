@@ -48,7 +48,7 @@ void FWorldSnake::Define()
                          SnakeView->SetModel(SnakeModel, CellSize, GridSize);
                          SnakeView->FinishSpawning(Origin);
                      });
-                 xIt("NumberOfWorldLinksMustMatchDefaultSnakeSize",    // Deprecated after introduce the object pool 
+                 xIt("NumberOfWorldLinksMustMatchDefaultSnakeSize",    // Deprecated after introduce the object pool
                      [this]()
                      {
                          TArray<AActor*> Links;
@@ -58,7 +58,7 @@ void FWorldSnake::Define()
 
                          SpecCloseLevel(World);
                      });
-                 xIt("NumberOfWorldLinksMustMatchSnakeSizeAfterIncrease",    // Deprecated after introduce the object pool 
+                 xIt("NumberOfWorldLinksMustMatchSnakeSizeAfterIncrease",    // Deprecated after introduce the object pool
                      [this]()
                      {
                          SnakeModel->increase();
