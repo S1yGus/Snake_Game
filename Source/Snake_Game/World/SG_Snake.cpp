@@ -59,16 +59,16 @@ void ASG_Snake::SetModel(const TSharedPtr<Snake>& Snake, uint32 InCellSize, cons
     SpwnLinks();
 }
 
-void ASG_Snake::UpdateColors(const FSnakeColorsTableRow& ColorsSet)
+void ASG_Snake::UpdateColors(const FSnakeDesignTableRow& DesignSet)
 {
     uint32 i{0};
     for (auto Link : Links)
     {
         const bool bIsHead = i++ == 0;
-        Link->UpdateColor(bIsHead ? ColorsSet.SnakeHeadColor : ColorsSet.SnakeBodyColor);
+        Link->UpdateColor(bIsHead ? DesignSet.SnakeHeadColor : DesignSet.SnakeBodyColor);
     }
 
-    LinkColor = ColorsSet.SnakeBodyColor;
+    LinkColor = DesignSet.SnakeBodyColor;
 }
 
 void ASG_Snake::Teardown()

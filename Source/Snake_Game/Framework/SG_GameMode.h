@@ -68,7 +68,7 @@ protected:
     TSubclassOf<ASG_Food> FoodVisualClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "Design")
-    TObjectPtr<UDataTable> SnakeColorsTable;
+    TObjectPtr<UDataTable> SnakeDesignTable;
 
     UPROPERTY(EditDefaultsOnly, Category = "SnakeInput")
     TObjectPtr<UInputAction> MoveForwardInputAction;
@@ -100,18 +100,22 @@ private:
     TObjectPtr<AExponentialHeightFog> Fog;
 
     UPROPERTY()
+    TArray<TObjectPtr<UStaticMesh>> FruitMeshes;
+
+    UPROPERTY()
     TObjectPtr<ASG_HUD> HUD;
 
     UFUNCTION(Exec, Category = "Console command")
-    void NextColor();
+    void NextDesign();
 #pragma endregion Variables and functions with Unreal Header Tool metadata
 
     TSharedPtr<SnakeGame::Game> CoreGame;
-    uint32 ColorsTableIndex{0};
+    uint32 DesignTableIndex{0};
     SnakeGame::Input SnakeInput{SnakeGame::Input::defaultInput};
 
-    void UpdateColors();
+    void UpdateDesign();
     void FindFog();
+    FORCEINLINE void RandomizeFoodMesh();
 
     SnakeGame::Settings MakeSettings() const;
 

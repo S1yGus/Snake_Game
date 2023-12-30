@@ -69,24 +69,24 @@ void FWorldGrid::Define()
                  It("ColorsShouldBeSetupCorrectly",
                     [this]()
                     {
-                        FSnakeColorsTableRow ColorsSet;
-                        ColorsSet.GridBackgroundColor = FLinearColor::Red;
-                        ColorsSet.GridWallsColor = FLinearColor::Green;
-                        ColorsSet.GridLinesColor = FLinearColor::Yellow;
+                        FSnakeDesignTableRow DesignSet;
+                        DesignSet.GridBackgroundColor = FLinearColor::Red;
+                        DesignSet.GridWallsColor = FLinearColor::Green;
+                        DesignSet.GridLinesColor = FLinearColor::Yellow;
 
-                        GridView->UpdateColors(ColorsSet);
+                        GridView->UpdateColors(DesignSet);
 
                         const UMaterialInterface* Material = GridStaticMeshComp->GetMaterial(0);
                         FLinearColor ColorToCheck;
 
                         Material->GetVectorParameterValue(FName{"BackgroundColor"}, ColorToCheck);
-                        TestTrueExpr(ColorToCheck.Equals(ColorsSet.GridBackgroundColor));
+                        TestTrueExpr(ColorToCheck.Equals(DesignSet.GridBackgroundColor));
 
                         Material->GetVectorParameterValue(FName{"WallsColor"}, ColorToCheck);
-                        TestTrueExpr(ColorToCheck.Equals(ColorsSet.GridWallsColor));
+                        TestTrueExpr(ColorToCheck.Equals(DesignSet.GridWallsColor));
 
                         Material->GetVectorParameterValue(FName{"LinesColor"}, ColorToCheck);
-                        TestTrueExpr(ColorToCheck.Equals(ColorsSet.GridLinesColor));
+                        TestTrueExpr(ColorToCheck.Equals(DesignSet.GridLinesColor));
 
                         SpecCloseLevel(World);
                     });

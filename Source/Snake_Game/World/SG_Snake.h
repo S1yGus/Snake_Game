@@ -15,7 +15,7 @@ class Snake;
 class ASG_BaseCellObject;
 class ASG_SnakeLink;
 class USG_ObjectPool;
-struct FSnakeColorsTableRow;
+struct FSnakeDesignTableRow;
 
 UCLASS()
 class SNAKE_GAME_API ASG_Snake : public AActor
@@ -37,9 +37,9 @@ public:
 
     /**
      * Updates snake colors
-     * @param ColorsSet The structure with color values
+     * @param DesignSet The structure with color values
      */
-    void UpdateColors(const FSnakeColorsTableRow& ColorsSet);
+    void UpdateColors(const FSnakeDesignTableRow& DesignSet);
 
     /**
      * Reproduces the teardown effect for each link and add it to the pool

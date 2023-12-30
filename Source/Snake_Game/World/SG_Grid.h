@@ -8,7 +8,7 @@
 #include "SG_Grid.generated.h"
 
 class UStaticMeshComponent;
-struct FSnakeColorsTableRow;
+struct FSnakeDesignTableRow;
 
 namespace SnakeGame
 {
@@ -34,9 +34,9 @@ public:
 
     /**
      * Updates grid colors
-     * @param ColorsSet The structure with color values
+     * @param DesignSet The structure with color values
      */
-    void UpdateColors(const FSnakeColorsTableRow& ColorsSet);
+    void UpdateColors(const FSnakeDesignTableRow& DesignSet);
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")

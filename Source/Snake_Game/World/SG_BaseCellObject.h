@@ -63,7 +63,7 @@ protected:
 private:
     FVector TargetScale;
     FTimerHandle ScaleTimerHandle;
-    FLinearColor ObjectColor;
+    FLinearColor ObjectColor{FLinearColor::Black};
 
     void OnChangingScale();
 };

@@ -30,6 +30,12 @@ public:
      */
     void SetModel(const TSharedPtr<SnakeGame::Food>& Food, uint32 InCellSize, const SnakeGame::Dim& InGridSize, const FVector& InGridOrigin);
 
+    /**
+     * Updates mesh and material of the object
+     * @param NewMesh Pointer to a new mesh
+     */
+    void UpdateMesh(UStaticMesh* NewMesh);
+
 private:
     TWeakPtr<SnakeGame::Food> CoreFood;
     SnakeGame::Dim GridSize;
