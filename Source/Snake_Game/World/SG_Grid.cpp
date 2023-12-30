@@ -57,13 +57,13 @@ void ASG_Grid::SetModel(const TSharedPtr<Grid>& Grid, uint32 InCellSize)
     }
 }
 
-void ASG_Grid::UpdateColors(const FSnakeColorsTableRow& ColorsSet)
+void ASG_Grid::UpdateColors(const FSnakeDesignTableRow& DesignSet)
 {
     if (MaterialInstance)
     {
-        MaterialInstance->SetVectorParameterValue(BackgroundColorParameterName, ColorsSet.GridBackgroundColor);
-        MaterialInstance->SetVectorParameterValue(WallsColorParameterName, ColorsSet.GridWallsColor);
-        MaterialInstance->SetVectorParameterValue(LinesColorParameterName, ColorsSet.GridLinesColor);
+        MaterialInstance->SetVectorParameterValue(BackgroundColorParameterName, DesignSet.GridBackgroundColor);
+        MaterialInstance->SetVectorParameterValue(WallsColorParameterName, DesignSet.GridWallsColor);
+        MaterialInstance->SetVectorParameterValue(LinesColorParameterName, DesignSet.GridLinesColor);
     }
 }
 

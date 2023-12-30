@@ -73,7 +73,6 @@ void ASG_GameMode::StartPlay()
     FoodView = GetWorld()->SpawnActorDeferred<ASG_Food>(FoodVisualClass, FoodTransform);
     check(FoodView);
     FoodView->SetModel(CoreGame->food(), CellSize, CoreGame->grid()->size(), GridOrigin.GetLocation());
-    FoodView->UpdateScale(CellSize);
     FoodView->FinishSpawning(FoodTransform);
 
     // Init pawn
@@ -86,13 +85,13 @@ void ASG_GameMode::StartPlay()
     HUD->SetKeyNames(Utils::GetActionKeyName(SnakeInputMapping, ResetInputAction), Utils::GetActionKeyName(SnakeInputMapping, BackToMenuInputAction));
     Utils::SetUIInput(GetWorld(), false);
 
-    // Update colors
-    check(SnakeColorsTable);
-    const int32 RowsAmount = SnakeColorsTable->GetRowNames().Num();
+    // Update design
+    check(SnakeDesignTable);
+    const int32 RowsAmount = SnakeDesignTable->GetRowNames().Num();
     check(RowsAmount != 0);
-    ColorsTableIndex = FMath::RandHelper(RowsAmount);
+    DesignTableIndex = FMath::RandHelper(RowsAmount);
     FindFog();
-    UpdateColors();
+    UpdateDesign();
 
     SetupInput();
 }
@@ -115,7 +114,7 @@ void ASG_GameMode::Reset()
     FoodView->RestartScaling();
     HUD->SetModel(CoreGame);
     SnakeInput = Input::defaultInput;
-    NextColor();
+    NextDesign();
     Utils::SetUIInput(GetWorld(), false);
 }
 
@@ -124,24 +123,29 @@ void ASG_GameMode::BackToMenu()
     UGameplayStatics::OpenLevelBySoftObjectPtr(this, MenuLevel);
 }
 
-void ASG_GameMode::NextColor()
+void ASG_GameMode::NextDesign()
 {
-    ColorsTableIndex = (ColorsTableIndex + 1) % SnakeColorsTable->GetRowNames().Num();
-    UpdateColors();
+    DesignTableIndex = (DesignTableIndex + 1) % SnakeDesignTable->GetRowNames().Num();
+    UpdateDesign();
 }
 
-void ASG_GameMode::UpdateColors()
+void ASG_GameMode::UpdateDesign()
 {
-    TArray<FSnakeColorsTableRow*> SnakeColorsTableRows;
-    SnakeColorsTable->GetAllRows<FSnakeColorsTableRow>({}, SnakeColorsTableRows);
-    const auto* ColorsSet = SnakeColorsTableRows[ColorsTableIndex];
-    GridView->UpdateColors(*ColorsSet);
-    SnakeView->UpdateColors(*ColorsSet);
-    FoodView->UpdateColor(ColorsSet->FoodColor);
+    TArray<FSnakeDesignTableRow*> SnakeDesignTableRows;
+    SnakeDesignTable->GetAllRows<FSnakeDesignTableRow>({}, SnakeDesignTableRows);
+    const auto* DesignSet = SnakeDesignTableRows[DesignTableIndex];
+
+    FruitMeshes = DesignSet->FruitMeshes;
+    const int32 FruitsAmount = FruitMeshes.Num();
+    check(FruitsAmount != 0);
+    RandomizeFoodMesh();
+
+    GridView->UpdateColors(*DesignSet);
+    SnakeView->UpdateColors(*DesignSet);
 
     if (Fog && Fog->GetComponent())
     {
-        Fog->GetComponent()->SkyAtmosphereAmbientContributionColorScale = ColorsSet->FogColor;
+        Fog->GetComponent()->SkyAtmosphereAmbientContributionColorScale = DesignSet->FogColor;
         Fog->MarkComponentsRenderStateDirty();
     }
 }
@@ -152,6 +156,12 @@ void ASG_GameMode::FindFog()
     UGameplayStatics::GetAllActorsOfClass(this, AExponentialHeightFog::StaticClass(), Fogs);
     check(Fogs.Num() == 1);
     Fog = Cast<AExponentialHeightFog>(Fogs[0]);
+}
+
+void ASG_GameMode::RandomizeFoodMesh()
+{
+    FoodView->UpdateMesh(FruitMeshes[FMath::RandHelper(FruitMeshes.Num())]);
+    FoodView->UpdateScale(CellSize);
 }
 
 Settings ASG_GameMode::MakeSettings() const
@@ -248,6 +258,7 @@ void ASG_GameMode::SubscribeOnGameEvent()
                     break;
                 case GameEvent::FoodTaken:
                     FoodView->Teardown();
+                    RandomizeFoodMesh();
                     FoodView->RestartScaling();
                     break;
                 default:

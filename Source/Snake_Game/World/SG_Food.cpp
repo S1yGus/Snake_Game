@@ -37,3 +37,12 @@ void ASG_Food::SetModel(const TSharedPtr<Food>& Food, uint32 InCellSize, const D
 
     SetActorHiddenInGame(false);
 }
+
+void ASG_Food::UpdateMesh(UStaticMesh* NewMesh)
+{
+    if (NewMesh && Mesh->GetStaticMesh() != NewMesh)
+    {
+        Mesh->SetStaticMesh(NewMesh);
+        Mesh->SetMaterial(0, NewMesh->GetMaterial(0));
+    }
+}
