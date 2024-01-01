@@ -17,9 +17,9 @@ enum class ESpeedOption : uint8
 UENUM()
 enum class ESizeOption : uint8
 {
-    Size_40x10 = 0,
-    Size_60x15,
-    Size_80x20
+    Size_30x12 = 0,
+    Size_40x16,
+    Size_50x20,
 };
 
 UCLASS()
@@ -111,10 +111,10 @@ private:
         FString Name;
         SnakeGame::Dim Size;
     };
-    TMap<ESizeOption, SizeData> SizeOptions{{ESizeOption::Size_40x10, {"40x10", {40, 10}}},    //
-                                            {ESizeOption::Size_60x15, {"60x15", {60, 15}}},    //
-                                            {ESizeOption::Size_80x20, {"80x20", {80, 20}}}};
-    SizeData CurrentSizeOption{SizeOptions[ESizeOption::Size_60x15]};
+    TMap<ESizeOption, SizeData> SizeOptions{{ESizeOption::Size_30x12, {"30x12", {30, 12}}},    //
+                                            {ESizeOption::Size_40x16, {"40x16", {40, 16}}},    //
+                                            {ESizeOption::Size_50x20, {"50x20", {50, 20}}}};
+    SizeData CurrentSizeOption{SizeOptions[ESizeOption::Size_40x16]};
 
     template <typename T>
     TArray<FString> GetOptionNames(const T& Options) const
