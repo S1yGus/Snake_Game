@@ -114,7 +114,7 @@ void FFramework::Define()
                                                                                                {ESpeedOption::Snake, {"Snake", 0.15f}}};
                         for (const auto& OnePayload : Payload)
                         {
-                            GameUserSettings->SaveSnakeSettings(OnePayload.TestValue, ESizeOption::Size_40x10);
+                            GameUserSettings->SaveSnakeSettings(OnePayload.TestValue, ESizeOption::Size_40x16);
                             TestTrueExpr(GameUserSettings->GetCurrentSpeedOptionName() == OnePayload.ExpectedValue.Key);
                             TestTrueExpr(GameUserSettings->GetCurrentSpeed() == OnePayload.ExpectedValue.Value);
                         }
@@ -123,7 +123,7 @@ void FFramework::Define()
                  It("AllSizeOptionNamesShouldExist",
                     [this]()
                     {
-                        const TArray<FString> Payload{"40x10", "60x15", "80x20"};
+                        const TArray<FString> Payload{"30x12", "40x16", "50x20"};
                         for (const auto& Name : Payload)
                         {
                             TestTrueExpr(GameUserSettings->GetSizeOptionNames().Find(Name) != INDEX_NONE);
@@ -133,9 +133,9 @@ void FFramework::Define()
                  It("SizeOptionsShouldBeFoundByName",
                     [this]()
                     {
-                        const TArray<TestPayload<FString, ESizeOption>> Payload{{"40x10", ESizeOption::Size_40x10},    //
-                                                                                {"60x15", ESizeOption::Size_60x15},    //
-                                                                                {"80x20", ESizeOption::Size_80x20}};
+                        const TArray<TestPayload<FString, ESizeOption>> Payload{{"30x12", ESizeOption::Size_30x12},    //
+                                                                                {"40x16", ESizeOption::Size_40x16},    //
+                                                                                {"50x20", ESizeOption::Size_50x20}};
                         for (const auto& OnePayload : Payload)
                         {
                             TestTrueExpr(GameUserSettings->GetSizeOptionByName(OnePayload.TestValue) == OnePayload.ExpectedValue);
@@ -145,13 +145,13 @@ void FFramework::Define()
                  It("SizeOptionsShouldBeSaved",
                     [this]()
                     {
-                        const TArray<TestPayload<ESizeOption, TPair<FString, SnakeGame::Dim>>> Payload{{ESizeOption::Size_40x10, {"40x10", SnakeGame::Dim{40, 10}}},    //
-                                                                                                       {ESizeOption::Size_60x15, {"60x15", SnakeGame::Dim{60, 15}}},    //
-                                                                                                       {ESizeOption::Size_80x20, {"80x20", SnakeGame::Dim{80, 20}}}};
+                        const TArray<TestPayload<ESizeOption, TPair<FString, SnakeGame::Dim>>> Payload{{ESizeOption::Size_30x12, {"30x12", SnakeGame::Dim{30, 12}}},    //
+                                                                                                       {ESizeOption::Size_40x16, {"40x16", SnakeGame::Dim{40, 16}}},    //
+                                                                                                       {ESizeOption::Size_50x20, {"50x20", SnakeGame::Dim{50, 20}}}};
                         for (const auto& OnePayload : Payload)
                         {
                             GameUserSettings->SaveSnakeSettings(ESpeedOption::Snake, OnePayload.TestValue);
-                            TestTrueExpr(GameUserSettings->GetCurrentSizeOptionName() == OnePayload.ExpectedValue.Key);
+                            TestTrueExpr(GameUserSettings->GetCurrentSizeOptionName().Equals(OnePayload.ExpectedValue.Key));
                             TestTrueExpr(GameUserSettings->GetCurrentSize() == OnePayload.ExpectedValue.Value);
                         }
                     });
