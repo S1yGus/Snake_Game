@@ -66,9 +66,6 @@ private:
     void clearCellsByType(CellType cellType);
     void updateInternal(const Position& position, CellType cellType);
     void printDebug() const;
-
-    FORCEINLINE uint32 posToIndex(uint32 x, uint32 y) const;
-    FORCEINLINE uint32 posToIndex(const Position& position) const;
 };
 
 }    // namespace SnakeGame

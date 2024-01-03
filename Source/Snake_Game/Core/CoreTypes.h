@@ -52,22 +52,35 @@ struct Position
     FORCEINLINE Position operator+(const Position& rhs) const { return {x + rhs.x, y + rhs.y}; }
     FORCEINLINE Position operator-(const Position& rhs) const { return {x - rhs.x, y - rhs.y}; }
     FORCEINLINE bool operator==(const Position& rhs) const { return x == rhs.x && y == rhs.y; }
+    FORCEINLINE bool operator!=(const Position& rhs) const { return x != rhs.x || y != rhs.y; }
 };
+
+FORCEINLINE Position indexToPos(uint32 index, uint32 width)
+{
+    return {index % width, static_cast<uint32>(index / width)};
+}
+
+FORCEINLINE uint32 posToIndex(uint32 x, uint32 y, uint32 width)
+{
+    return y * width + x;
+}
+
+FORCEINLINE uint32 posToIndex(const Position& pos, uint32 width)
+{
+    return posToIndex(pos.x, pos.y, width);
+}
 
 class IPositionRandomizer
 {
 public:
     virtual ~IPositionRandomizer() = default;
-    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, uint32 width) const = 0;
+    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, const Dim& size) const = 0;
 };
 
 class PositionRandomizer : public IPositionRandomizer
 {
 public:
-    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, uint32 width) const override;
-
-private:
-    FORCEINLINE Position indexToPos(uint32 index, uint32 width) const;
+    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, const Dim& size) const override;
 };
 
 struct Settings

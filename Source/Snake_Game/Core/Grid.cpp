@@ -44,14 +44,14 @@ void Grid::update(const Position& position, CellType cellType)
 
 bool Grid::hitTest(const Position& position, CellType cellType) const
 {
-    return m_cells[posToIndex(position)] == cellType;
+    return m_cells[posToIndex(position, c_size.width)] == cellType;
 }
 
 TOptional<Position> Grid::randomEmptyPosition() const
 {
     if (m_positionRandomizer.IsValid())
     {
-        return m_positionRandomizer->randomEmptyPosition(m_cells, c_size.width);
+        return m_positionRandomizer->randomEmptyPosition(m_cells, c_size);
     }
 
     return NullOpt;
@@ -70,7 +70,7 @@ void Grid::initWalls()
         {
             if (y == 0 || y == c_size.height - 1 || x == 0 || x == c_size.width - 1)
             {
-                m_cells[posToIndex(x, y)] = CellType::Wall;
+                m_cells[posToIndex(x, y, c_size.width)] = CellType::Wall;
             }
         }
     }
@@ -95,7 +95,7 @@ void Grid::clearCellsByType(CellType cellType)
 
 void Grid::updateInternal(const Position& position, CellType cellType)
 {
-    const auto index = posToIndex(position);
+    const auto index = posToIndex(position, c_size.width);
     m_cells[index] = cellType;
     m_indexesByType[cellType].Add(index);
 }
@@ -108,7 +108,7 @@ void Grid::printDebug() const
         for (uint32 x = 0; x != c_size.width; ++x)
         {
             TCHAR ch{' '};
-            switch (m_cells[posToIndex(x, y)])
+            switch (m_cells[posToIndex(x, y, c_size.width)])
             {
                 case CellType::Empty:
                     ch = '0';
@@ -129,14 +129,4 @@ void Grid::printDebug() const
 
         UE_LOG(LogGrid, Display, TEXT("%s"), *line);
     }
-}
-
-uint32 Grid::posToIndex(uint32 x, uint32 y) const
-{
-    return x + y * c_size.width;
-}
-
-uint32 Grid::posToIndex(const Position& position) const
-{
-    return posToIndex(position.x, position.y);
 }
