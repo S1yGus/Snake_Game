@@ -8,29 +8,27 @@ const Input Input::defaultInput = {1, 0};
 
 const Position Position::zero = {0, 0};
 
-TOptional<Position> PositionRandomizer::randomEmptyPosition(const TArray<CellType>& cells, uint32 width) const
+TOptional<Position> PositionRandomizer::randomEmptyPosition(const TArray<CellType>& cells, const Dim& size) const
 {
-    const auto index = FMath::RandHelper(cells.Num());
-    for (uint32 i = index; i != cells.Num(); ++i)
+    const Position randomStart{.x = static_cast<uint32>(FMath::RandRange(1, size.width - 2)),    //
+                               .y = static_cast<uint32>(FMath::RandRange(1, size.height - 2))};
+    Position randomPosition{randomStart};
+    do
     {
-        if (cells[i] == CellType::Empty)
+        if (cells[posToIndex(randomPosition, size.width)] == CellType::Empty)
         {
-            return indexToPos(i, width);
+            return randomPosition;
         }
-    }
 
-    for (uint32 i = 0; i != index; ++i)
-    {
-        if (cells[i] == CellType::Empty)
+        if (++randomPosition.x == size.width - 1)
         {
-            return indexToPos(i, width);
+            randomPosition.x = 1;
+            if (++randomPosition.y == size.height - 1)
+            {
+                randomPosition.y = 1;
+            }
         }
-    }
+    } while (randomPosition != randomStart);
 
     return NullOpt;
-}
-
-Position PositionRandomizer::indexToPos(uint32 index, uint32 width) const
-{
-    return {index % width, static_cast<uint32>(index / width)};
 }

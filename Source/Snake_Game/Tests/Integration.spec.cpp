@@ -22,7 +22,7 @@ class MockPositionRandomizer : public IPositionRandomizer
 public:
     MockPositionRandomizer(const TArray<Position>& InPositions) : Positions{InPositions} {}
 
-    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, uint32 width) const override
+    virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, const Dim& size) const override
     {
         if (Index < Positions.Num())
         {
@@ -97,7 +97,8 @@ void FIntegration::Define()
                  BeforeEach(
                      [this]()
                      {
-                         const TArray<Position> Positions = {Position::zero, Position::zero, Position::zero, Position::zero, Position::zero, Position::zero};
+                         TArray<Position> Positions;
+                         Positions.Init(Position::zero, 6);
                          GameSettings = {.gridSize{10, 10},
                                          .gameSpeed{1.0f},
                                          .snake{.defaultSize{4}, .startPosition{Grid::center({10, 10})}},
