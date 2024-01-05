@@ -5,7 +5,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
-static constexpr float ScalingTimerRate = 0.016f;
+static constexpr float ScalingTimerRate{0.016f};
 
 ASG_BaseCellObject::ASG_BaseCellObject()
 {
@@ -42,7 +42,7 @@ void ASG_BaseCellObject::UpdateColor(const FLinearColor& Color)
 
 void ASG_BaseCellObject::RestartScaling()
 {
-    Mesh->SetRelativeScale3D(FVector::ZeroVector);
+    Mesh->SetRelativeScale3D(FVector(UE_DOUBLE_KINDA_SMALL_NUMBER));
     GetWorldTimerManager().SetTimer(ScaleTimerHandle, this, &ThisClass::OnChangingScale, ScalingTimerRate, true);
 }
 
