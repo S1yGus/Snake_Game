@@ -8,7 +8,7 @@
 namespace SnakeGame
 {
 
-class Grid
+class SNAKE_GAME_API Grid
 {
 public:
     Grid(const Dim& size, const TSharedPtr<IPositionRandomizer>& positionRandomizer = MakeShared<PositionRandomizer>());
