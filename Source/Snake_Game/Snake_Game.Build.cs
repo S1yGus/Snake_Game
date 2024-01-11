@@ -16,10 +16,5 @@ public class Snake_Game : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "SlateCore", "EnhancedInput", "Niagara" });
         PublicIncludePaths.AddRange(new string[] { "Snake_Game" });
-
-        if (Target.Configuration != UnrealTargetConfiguration.Shipping)
-        {
-            PublicDependencyModuleNames.Add("FunctionalTesting");
-        }
     }
 }

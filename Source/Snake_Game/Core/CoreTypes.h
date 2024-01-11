@@ -23,7 +23,7 @@ enum class GameEvent
     FoodTaken
 };
 
-struct Dim
+struct SNAKE_GAME_API Dim
 {
     uint32 width;
     uint32 height;
@@ -31,7 +31,7 @@ struct Dim
     FORCEINLINE bool operator==(const Dim& rhs) const { return width == rhs.width && height == rhs.height; }
 };
 
-struct Input
+struct SNAKE_GAME_API Input
 {
     int8 x;
     int8 y;
@@ -41,7 +41,7 @@ struct Input
     FORCEINLINE bool opposite(const Input& rhs) const { return (x != 0 && x == -rhs.x) || (y != 0 && y == -rhs.y); }
 };
 
-struct Position
+struct SNAKE_GAME_API Position
 {
     uint32 x;
     uint32 y;
@@ -70,20 +70,20 @@ FORCEINLINE uint32 posToIndex(const Position& pos, uint32 width)
     return posToIndex(pos.x, pos.y, width);
 }
 
-class IPositionRandomizer
+class SNAKE_GAME_API IPositionRandomizer
 {
 public:
     virtual ~IPositionRandomizer() = default;
     virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, const Dim& size) const = 0;
 };
 
-class PositionRandomizer : public IPositionRandomizer
+class SNAKE_GAME_API PositionRandomizer : public IPositionRandomizer
 {
 public:
     virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, const Dim& size) const override;
 };
 
-struct Settings
+struct SNAKE_GAME_API Settings
 {
     Dim gridSize;
     float gameSpeed;

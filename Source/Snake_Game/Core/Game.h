@@ -12,7 +12,7 @@ class Grid;
 class Snake;
 class Food;
 
-class Game
+class SNAKE_GAME_API Game
 {
 public:
     Game(const Settings& settings);

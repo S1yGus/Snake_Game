@@ -13,6 +13,16 @@
 				"UMG",
 				"CoreUObject"
 			]
+		},
+		{
+			"Name": "Snake_Game_Tests",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG",
+				"CoreUObject"
+			]
 		}
 	],
 	"Plugins": [
