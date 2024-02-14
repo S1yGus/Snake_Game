@@ -52,6 +52,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     float ScaleInterpSpeed{1.0f};
 
+    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    float CellSizeFactor{1.0f};
+
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
     TObjectPtr<UNiagaraSystem> TeardownEffect;
 

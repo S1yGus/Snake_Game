@@ -11,6 +11,19 @@ FVector Utils::PosToVector(const Position& Position, const Dim& GridSize, uint32
     return FVector((GridSize.height - 1 - Position.y) * CellSize, Position.x * CellSize, 0.0) + FVector(CellSize * 0.5);
 }
 
+FRotator Utils::InputToRotator(const Input& Input)
+{
+    double Yaw{0.0};
+    if (Input.y > 0)
+        Yaw = 90.0;
+    else if (Input.y < 0)
+        Yaw = -90.0;
+    else if (Input.x < 0)
+        Yaw = 180.0;
+
+    return {0.0, Yaw, 0.0};
+}
+
 FText Utils::FormatScore(uint32 Score)
 {
     return FText::FromString(FString::Printf(TEXT("%03d"), Score));

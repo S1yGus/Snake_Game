@@ -17,9 +17,9 @@ void ASG_Food::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (CoreFood.IsValid())
+    if (TSharedPtr<Food> Food = CoreFood.Pin(); Food.IsValid())
     {
-        SetActorLocation(GridOrigin + Utils::PosToVector(CoreFood.Pin()->position(), GridSize, CellSize));
+        SetActorLocation(GridOrigin + Utils::PosToVector(Food->position(), GridSize, CellSize));
     }
 }
 

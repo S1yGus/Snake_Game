@@ -15,6 +15,7 @@ class Utils
 {
 public:
     static FVector PosToVector(const Position& Position, const Dim& GridSize, uint32 CellSize);
+    static FRotator InputToRotator(const Input& Input);
     static FText FormatScore(uint32 Score);
     static FText FormatTime(float Seconds);
     static FString GetActionKeyName(TObjectPtr<const UInputMappingContext> MappingContext, TObjectPtr<const UInputAction> Action);
