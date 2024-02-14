@@ -48,10 +48,13 @@ public:
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
-    int32 ReservedLinksNumber{10};
+    TSubclassOf<ASG_SnakeLink> SnakeHeadClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     TSubclassOf<ASG_SnakeLink> SnakeLinkClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    int32 ReservedLinksNumber{10};
 
 private:
 #pragma region With metadata
@@ -59,14 +62,20 @@ private:
     TArray<TObjectPtr<ASG_BaseCellObject>> Links;
     UPROPERTY()
     TObjectPtr<USG_ObjectPool> LinkPool;
+    UPROPERTY()
+    TObjectPtr<USG_ObjectPool> HeadPool;
 #pragma endregion Variables with Unreal Header Tool metadata
 
     TWeakPtr<SnakeGame::Snake> CoreSnake;
     uint32 CellSize;
     SnakeGame::Dim GridSize;
     FLinearColor LinkColor;
+    SnakeGame::Position PrevHeadPosition{SnakeGame::Position::zero};
+    SnakeGame::Position PrevTailPosition{SnakeGame::Position::zero};
 
-    void InitPool();
+    void InitPools();
     void EmptyLinks();
-    void SpwnLinks();
+    void SpawnLinks();
+    void UpdateLinks(SnakeGame::SnakeNode* SnakeNode);
+    void AddLinks(SnakeGame::SnakeNode* SnakeNode);
 };

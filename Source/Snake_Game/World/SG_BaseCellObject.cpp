@@ -25,9 +25,9 @@ void ASG_BaseCellObject::UpdateScale(uint32 CellSize)
     check(Mesh->GetStaticMesh());
     const FBox Box = Mesh->GetStaticMesh()->GetBoundingBox();
     const FVector BoxSize = Box.GetSize();
-    check(FMath::IsNearlyEqual(BoxSize.X, BoxSize.Y));    // The maximum dimensions of the model should form a square in the X and Y space
-    check(BoxSize.X != 0);                                // Cannot divide by zero
-    TargetScale = FVector(CellSize / BoxSize.X);
+    check(FMath::IsNearlyEqual(BoxSize.X, BoxSize.Y, 0.1));    // The maximum dimensions of the model should form a square in the X and Y space
+    check(BoxSize.X != 0);                                     // Cannot divide by zero
+    TargetScale = FVector(CellSize / BoxSize.X * CellSizeFactor);
 }
 
 void ASG_BaseCellObject::UpdateColor(const FLinearColor& Color)

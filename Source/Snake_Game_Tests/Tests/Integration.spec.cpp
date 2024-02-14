@@ -17,10 +17,10 @@ TUniquePtr<Game> CoreGame;
 
 END_DEFINE_SPEC(FIntegration)
 
-class MockPositionRandomizer : public IPositionRandomizer
+class StubPositionRandomizer : public IPositionRandomizer
 {
 public:
-    MockPositionRandomizer(const TArray<Position>& InPositions) : Positions{InPositions} {}
+    StubPositionRandomizer(const TArray<Position>& InPositions) : Positions{InPositions} {}
 
     virtual TOptional<Position> randomEmptyPosition(const TArray<CellType>& cells, const Dim& size) const override
     {
@@ -69,7 +69,7 @@ void FIntegration::Define()
                          GameSettings = {.gridSize{3, 1},
                                          .gameSpeed{1.0f},
                                          .snake{.defaultSize{2}, .startPosition{2, 1}},
-                                         .positionRandomizer = MakeShared<MockPositionRandomizer>(Positions)};
+                                         .positionRandomizer = MakeShared<StubPositionRandomizer>(Positions)};
                          CoreGame = MakeUnique<Game>(GameSettings);
                      });
                  It("GameCanBeCompleted",
@@ -102,7 +102,7 @@ void FIntegration::Define()
                          GameSettings = {.gridSize{10, 10},
                                          .gameSpeed{1.0f},
                                          .snake{.defaultSize{4}, .startPosition{Grid::center({10, 10})}},
-                                         .positionRandomizer = MakeShared<MockPositionRandomizer>(Positions)};
+                                         .positionRandomizer = MakeShared<StubPositionRandomizer>(Positions)};
                          CoreGame = MakeUnique<Game>(GameSettings);
                      });
                  It("SnakeShouldMoveCorrectlyNextToIt'sTail",
@@ -156,7 +156,7 @@ void FIntegration::Define()
                          GameSettings = {.gridSize{5, 5},
                                          .gameSpeed{1.0f},
                                          .snake{.defaultSize{4}, .startPosition{4, 3}},
-                                         .positionRandomizer = MakeShared<MockPositionRandomizer>(Positions)};
+                                         .positionRandomizer = MakeShared<StubPositionRandomizer>(Positions)};
                          CoreGame = MakeUnique<Game>(GameSettings);
                      });
                  It("FoodCanBeTaken",
