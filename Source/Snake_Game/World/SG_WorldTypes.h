@@ -7,6 +7,20 @@
 #include "SG_WorldTypes.generated.h"
 
 USTRUCT(BlueprintType)
+struct FFruitData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    TObjectPtr<UStaticMesh> Meshe;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    TArray<FLinearColor> Colors;
+
+    FLinearColor GetRandomColor() const;
+};
+
+USTRUCT(BlueprintType)
 struct FSnakeDesignTableRow : public FTableRowBase
 {
     GENERATED_BODY()
@@ -30,5 +44,5 @@ struct FSnakeDesignTableRow : public FTableRowBase
     FLinearColor SnakeBodyColor;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-    TArray<TObjectPtr<UStaticMesh>> FruitMeshes;
+    TArray<FFruitData> FruitData;
 };

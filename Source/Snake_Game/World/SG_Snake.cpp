@@ -53,7 +53,7 @@ void ASG_Snake::SetModel(const TSharedPtr<Snake>& Snake, uint32 InCellSize, cons
 
     InitPools();
     EmptyLinks();
-    SpwnLinks();
+    SpawnLinks();
 }
 
 void ASG_Snake::UpdateColors(const FSnakeDesignTableRow& DesignSet)

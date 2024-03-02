@@ -17,6 +17,7 @@ class AExponentialHeightFog;
 class UInputAction;
 class UInputMappingContext;
 class ASG_HUD;
+struct FFruitData;
 
 UCLASS()
 class SNAKE_GAME_API ASG_GameMode : public AGameModeBase
@@ -100,7 +101,7 @@ private:
     TObjectPtr<AExponentialHeightFog> Fog;
 
     UPROPERTY()
-    TArray<TObjectPtr<UStaticMesh>> FruitMeshes;
+    TArray<FFruitData> FruitData;
 
     UPROPERTY()
     TObjectPtr<ASG_HUD> HUD;
