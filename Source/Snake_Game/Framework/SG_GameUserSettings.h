@@ -114,7 +114,7 @@ private:
     TMap<ESizeOption, SizeData> SizeOptions{{ESizeOption::Size_30x12, {"30x12", {30, 12}}},    //
                                             {ESizeOption::Size_40x16, {"40x16", {40, 16}}},    //
                                             {ESizeOption::Size_50x20, {"50x20", {50, 20}}}};
-    SizeData CurrentSizeOption{SizeOptions[ESizeOption::Size_40x16]};
+    SizeData CurrentSizeOption{SizeOptions[ESizeOption::Size_30x12]};
 
     template <typename T>
     TArray<FString> GetOptionNames(const T& Options) const

@@ -135,9 +135,8 @@ void ASG_GameMode::UpdateDesign()
     SnakeDesignTable->GetAllRows<FSnakeDesignTableRow>({}, SnakeDesignTableRows);
     const auto* DesignSet = SnakeDesignTableRows[DesignTableIndex];
 
-    FruitMeshes = DesignSet->FruitMeshes;
-    const int32 FruitsAmount = FruitMeshes.Num();
-    check(FruitsAmount != 0);
+    FruitData = DesignSet->FruitData;
+    check(!FruitData.IsEmpty());
     RandomizeFoodMesh();
 
     GridView->UpdateColors(*DesignSet);
@@ -160,7 +159,9 @@ void ASG_GameMode::FindFog()
 
 void ASG_GameMode::RandomizeFoodMesh()
 {
-    FoodView->UpdateMesh(FruitMeshes[FMath::RandHelper(FruitMeshes.Num())]);
+    const auto& RandFruitData = FruitData[FMath::RandHelper(FruitData.Num())];
+    FoodView->UpdateMesh(RandFruitData.Meshe);
+    FoodView->UpdateColor(RandFruitData.GetRandomColor());
     FoodView->UpdateScale(CellSize);
 }
 
