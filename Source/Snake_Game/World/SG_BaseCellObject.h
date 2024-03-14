@@ -32,7 +32,7 @@ public:
     /**
      * Restarts the scale of the object from zero to the target scale
      */
-    void RestartScaling();
+    virtual void RestartScaling();
 
     /**
      * Reproduces the teardown effect
@@ -49,10 +49,10 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Materials")
     FName MaterialColorParameterName{"Color"};
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "0.0"))
     float ScaleInterpSpeed{1.0f};
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "0.0"))
     float CellSizeFactor{1.0f};
 
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
@@ -69,4 +69,5 @@ private:
     FLinearColor ObjectColor{FLinearColor::Black};
 
     void OnChangingScale();
+    virtual void OnScalingDone();
 };
