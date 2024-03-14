@@ -19,7 +19,13 @@ void ASG_Food::Tick(float DeltaTime)
 
     if (TSharedPtr<Food> Food = CoreFood.Pin(); Food.IsValid())
     {
-        SetActorLocation(GridOrigin + Utils::PosToVector(Food->position(), GridSize, CellSize));
+        FVector NewLocation = GridOrigin + Utils::PosToVector(Food->position(), GridSize, CellSize);
+        if (bScalingDone)
+        {
+            NewLocation.Z += FMath::Abs(FMath::Sin(PeriodicTime * PeriodicSpeed)) * CellSize * PeriodicAmplitudeFactor;
+            PeriodicTime += DeltaTime;
+        }
+        SetActorLocation(NewLocation);
     }
 }
 
@@ -45,4 +51,17 @@ void ASG_Food::UpdateMesh(UStaticMesh* NewMesh)
         Mesh->SetStaticMesh(NewMesh);
         Mesh->SetMaterial(0, NewMesh->GetMaterial(0));
     }
+}
+
+void ASG_Food::RestartScaling()
+{
+    Super::RestartScaling();
+
+    bScalingDone = false;
+}
+
+void ASG_Food::OnScalingDone()
+{
+    PeriodicTime = 0.0f;
+    bScalingDone = true;
 }

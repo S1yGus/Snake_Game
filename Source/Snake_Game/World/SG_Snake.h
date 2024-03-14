@@ -53,7 +53,7 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     TSubclassOf<ASG_SnakeLink> SnakeLinkClass;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings")
+    UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "0"))
     int32 ReservedLinksNumber{10};
 
 private:

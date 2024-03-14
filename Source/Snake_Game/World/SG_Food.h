@@ -36,9 +36,25 @@ public:
      */
     void UpdateMesh(UStaticMesh* NewMesh);
 
+    /**
+     * Restarts the scale of the object from zero to the target scale
+     */
+    virtual void RestartScaling() override;
+
+protected:
+    UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float PeriodicAmplitudeFactor{0.2f};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "0.0"))
+    float PeriodicSpeed{2.0f};
+
 private:
     TWeakPtr<SnakeGame::Food> CoreFood;
     SnakeGame::Dim GridSize;
     uint32 CellSize;
     FVector GridOrigin;
+    bool bScalingDone{false};
+    float PeriodicTime{0.0f};
+
+    virtual void OnScalingDone() override;
 };

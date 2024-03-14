@@ -70,5 +70,10 @@ void ASG_BaseCellObject::OnChangingScale()
     {
         Mesh->SetRelativeScale3D(TargetScale);
         GetWorldTimerManager().ClearTimer(ScaleTimerHandle);
+        OnScalingDone();
     }
+}
+
+void ASG_BaseCellObject::OnScalingDone()
+{
 }
