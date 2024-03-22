@@ -3,9 +3,11 @@
 #include "UI/SG_MenuWidget.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
+#include "Components/HorizontalBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Framework/SG_GameUserSettings.h"
+#include "UI/SG_CultureButton.h"
 
 void USG_MenuWidget::NativeOnInitialized()
 {
@@ -16,10 +18,11 @@ void USG_MenuWidget::NativeOnInitialized()
     check(QuitGameButton);
     QuitGameButton->OnClicked.AddDynamic(this, &ThisClass::OnQuitGame);
 
-    if (const auto* GameUserSettings = USG_GameUserSettings::Get())
+    if (auto* GameUserSettings = USG_GameUserSettings::Get())
     {
         InitComboBox(SpeedComboBox, GameUserSettings->GetSpeedOptionNames(), GameUserSettings->GetCurrentSpeedOptionName());
         InitComboBox(SizeComboBox, GameUserSettings->GetSizeOptionNames(), GameUserSettings->GetCurrentSizeOptionName());
+        InitCultureButtonsBox(GameUserSettings);
     }
 }
 
@@ -46,14 +49,33 @@ void USG_MenuWidget::OnComboBoxSelectionChanged(FString SelectedItem, ESelectInf
     }
 }
 
-void USG_MenuWidget::InitComboBox(TObjectPtr<UComboBoxString> ComboBox, const TArray<FString>& OptionNames, const FString& CurrentOptionName)
+void USG_MenuWidget::InitComboBox(TObjectPtr<UComboBoxString> ComboBox, const TArray<FText>& OptionNames, const FText& CurrentOptionName)
 {
     check(ComboBox);
     ComboBox->ClearOptions();
     for (const auto& Option : OptionNames)
     {
-        ComboBox->AddOption(Option);
+        ComboBox->AddOption(Option.ToString());
     }
-    ComboBox->SetSelectedOption(CurrentOptionName);
+    ComboBox->SetSelectedOption(CurrentOptionName.ToString());
     ComboBox->OnSelectionChanged.AddDynamic(this, &ThisClass::OnComboBoxSelectionChanged);
+}
+
+void USG_MenuWidget::InitCultureButtonsBox(TObjectPtr<USG_GameUserSettings> GameUserSettings)
+{
+    check(CultureButtonsBox);
+    CultureButtonsBox->ClearChildren();
+    for (const auto& CultureOption : GameUserSettings->GetCultureOptions())
+    {
+        auto* CultureButton = CreateWidget<USG_CultureButton>(this, CultureButtonClass);
+        check(CultureButton);
+        CultureButton->Init(CultureOption);
+        CultureButton->OnClickedCultureButton.BindLambda(
+            [this, GameUserSettings](ECulture Culture)
+            {
+                GameUserSettings->SetCurrentCulture(Culture);
+                UGameplayStatics::OpenLevel(this, FName{*GetWorld()->GetName()}, false);
+            });
+        CultureButtonsBox->AddChild(CultureButton);
+    }
 }

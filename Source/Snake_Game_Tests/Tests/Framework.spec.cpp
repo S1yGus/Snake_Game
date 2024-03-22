@@ -91,9 +91,13 @@ void FFramework::Define()
                     [this]()
                     {
                         const TArray<FString> Payload{"Worm", "Snake"};
-                        for (const auto& Name : Payload)
+                        for (const auto& ExpectedName : Payload)
                         {
-                            TestTrueExpr(GameUserSettings->GetSpeedOptionNames().Find(Name) != INDEX_NONE);
+                            TestTrueExpr(GameUserSettings->GetSpeedOptionNames().FindByPredicate(
+                                             [&ExpectedName](const auto& OptionName)
+                                             {
+                                                 return OptionName.ToString().Equals(ExpectedName);
+                                             }) != nullptr);
                         }
                     });
 
@@ -115,7 +119,7 @@ void FFramework::Define()
                         for (const auto& OnePayload : Payload)
                         {
                             GameUserSettings->SaveSnakeSettings(OnePayload.TestValue, ESizeOption::Size_40x16);
-                            TestTrueExpr(GameUserSettings->GetCurrentSpeedOptionName() == OnePayload.ExpectedValue.Key);
+                            TestTrueExpr(GameUserSettings->GetCurrentSpeedOptionName().ToString().Equals(OnePayload.ExpectedValue.Key));
                             TestTrueExpr(GameUserSettings->GetCurrentSpeed() == OnePayload.ExpectedValue.Value);
                         }
                     });
@@ -124,9 +128,13 @@ void FFramework::Define()
                     [this]()
                     {
                         const TArray<FString> Payload{"30x12", "40x16", "50x20"};
-                        for (const auto& Name : Payload)
+                        for (const auto& ExpectedName : Payload)
                         {
-                            TestTrueExpr(GameUserSettings->GetSizeOptionNames().Find(Name) != INDEX_NONE);
+                            TestTrueExpr(GameUserSettings->GetSizeOptionNames().FindByPredicate(
+                                             [&ExpectedName](const auto& OptionName)
+                                             {
+                                                 return OptionName.ToString().Equals(ExpectedName);
+                                             }) != nullptr);
                         }
                     });
 
@@ -151,7 +159,7 @@ void FFramework::Define()
                         for (const auto& OnePayload : Payload)
                         {
                             GameUserSettings->SaveSnakeSettings(ESpeedOption::Snake, OnePayload.TestValue);
-                            TestTrueExpr(GameUserSettings->GetCurrentSizeOptionName().Equals(OnePayload.ExpectedValue.Key));
+                            TestTrueExpr(GameUserSettings->GetCurrentSizeOptionName().ToString().Equals(OnePayload.ExpectedValue.Key));
                             TestTrueExpr(GameUserSettings->GetCurrentSize() == OnePayload.ExpectedValue.Value);
                         }
                     });
