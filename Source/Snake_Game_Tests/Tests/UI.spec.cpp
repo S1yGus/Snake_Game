@@ -12,6 +12,8 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/TextBlock.h"
+#include "Components/HorizontalBox.h"
+#include "Framework/SG_GameUserSettings.h"
 
 using namespace Test;
 
@@ -41,6 +43,16 @@ void FSnakeUI::Define()
                         const auto* MenuWidget = FindWidgetByClass<USG_MenuWidget>();
                         if (!TestNotNull("Menu widget should exist", MenuWidget))
                             return;
+
+                        const auto* GameUserSettings = USG_GameUserSettings::Get();
+                        if (!TestNotNull("GameUserSettings should exist", GameUserSettings))
+                            return;
+
+                        const auto* CultureButtonsBox = Cast<UHorizontalBox>(FindWidgetByName(MenuWidget, "CultureButtonsBox"));
+                        if (!TestNotNull("CultureButtonsBox widget should exist", CultureButtonsBox))
+                            return;
+
+                        TestTrueExpr(CultureButtonsBox->GetAllChildren().Num() == GameUserSettings->GetCultureOptions().Num());
 
                         const auto* StartGameButton = Cast<UButton>(FindWidgetByName(MenuWidget, "StartGameButton"));
                         TestTrueExpr(StartGameButton != nullptr);

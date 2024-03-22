@@ -22,6 +22,25 @@ enum class ESizeOption : uint8
     Size_50x20,
 };
 
+UENUM()
+enum class ECulture : uint8
+{
+    EN = 0,
+    RU
+};
+
+USTRUCT()
+struct FCultureData
+{
+    GENERATED_USTRUCT_BODY()
+
+    UPROPERTY(EditDefaultsOnly)
+    ECulture Culture;
+
+    UPROPERTY(EditDefaultsOnly)
+    FString RepresentationReference;
+};
+
 UCLASS()
 class SNAKE_GAME_API USG_GameUserSettings : public UGameUserSettings
 {
@@ -46,15 +65,15 @@ public:
 #pragma region Game speed
     /**
      * Returns an array of game speed option names
-     * @return TArray<FString> Speed option names
+     * @return TArray<FText> Speed option names
      */
-    TArray<FString> GetSpeedOptionNames() const;
+    TArray<FText> GetSpeedOptionNames() const;
 
     /**
      * Returns current game speed option name
-     * @return FString Current speed option name
+     * @return FText Current speed option name
      */
-    FString GetCurrentSpeedOptionName() const { return CurrentSpeedOption.Name; }
+    FText GetCurrentSpeedOptionName() const { return CurrentSpeedOption.Name; }
 
     /**
      * Returns current game speed option value
@@ -72,15 +91,15 @@ public:
 #pragma region Grid size
     /**
      * Returns an array of grid size option names
-     * @return TArray<FString> Grid size option names
+     * @return TArray<FText> Grid size option names
      */
-    TArray<FString> GetSizeOptionNames() const;
+    TArray<FText> GetSizeOptionNames() const;
 
     /**
      * Returns current grid size option name
-     * @return FString Current grid szie option name
+     * @return FText Current grid szie option name
      */
-    FString GetCurrentSizeOptionName() const { return CurrentSizeOption.Name; }
+    FText GetCurrentSizeOptionName() const { return CurrentSizeOption.Name; }
 
     /**
      * Returns current grid size option value
@@ -95,31 +114,47 @@ public:
      */
     TOptional<ESizeOption> GetSizeOptionByName(const FString& Name) const;
 #pragma endregion Grid size functions
+#pragma region Culture
+    /**
+     * Returns an array of culture options data
+     * @return TArray<FCultureData> Culture options data
+     */
+    TArray<FCultureData> GetCultureOptions() const { return CultureOptions; }
+
+    /**
+     * Saves the given culture
+     * @param Culture Culture option
+     */
+    void SetCurrentCulture(ECulture Culture);
+#pragma endregion Culture functions
 
 private:
     struct SpeedData
     {
-        FString Name;
+        FText Name;
         float Speed;
     };
-    TMap<ESpeedOption, SpeedData> SpeedOptions{{ESpeedOption::Worm, {"Worm", 0.3f}},    //
-                                               {ESpeedOption::Snake, {"Snake", 0.15f}}};
+    TMap<ESpeedOption, SpeedData> SpeedOptions{{ESpeedOption::Worm, {NSLOCTEXT("Snake_Game_UI", "SpeedWorm_Loc", "Worm"), 0.3f}},    //
+                                               {ESpeedOption::Snake, {NSLOCTEXT("Snake_Game_UI", "SpeedSnake_Loc", "Snake"), 0.15f}}};
     SpeedData CurrentSpeedOption{SpeedOptions[ESpeedOption::Snake]};
 
     struct SizeData
     {
-        FString Name;
+        FText Name;
         SnakeGame::Dim Size;
     };
-    TMap<ESizeOption, SizeData> SizeOptions{{ESizeOption::Size_30x12, {"30x12", {30, 12}}},    //
-                                            {ESizeOption::Size_40x16, {"40x16", {40, 16}}},    //
-                                            {ESizeOption::Size_50x20, {"50x20", {50, 20}}}};
+    TMap<ESizeOption, SizeData> SizeOptions{{ESizeOption::Size_30x12, {FText::FromString("30x12"), {30, 12}}},    //
+                                            {ESizeOption::Size_40x16, {FText::FromString("40x16"), {40, 16}}},    //
+                                            {ESizeOption::Size_50x20, {FText::FromString("50x20"), {50, 20}}}};
     SizeData CurrentSizeOption{SizeOptions[ESizeOption::Size_30x12]};
 
+    TArray<FCultureData> CultureOptions{{ECulture::EN, "Texture2D '/Game/UI/Texture/T_En.T_En'"},    //
+                                        {ECulture::RU, "Texture2D '/Game/UI/Texture/T_Ru.T_Ru'"}};
+
     template <typename T>
-    TArray<FString> GetOptionNames(const T& Options) const
+    TArray<FText> GetOptionNames(const T& Options) const
     {
-        TArray<FString> Names;
+        TArray<FText> Names;
         Algo::Transform(Options, Names,
                         [](const auto& Data)
                         {
@@ -134,7 +169,7 @@ private:
         if (const auto* Found = Algo::FindByPredicate(Options,
                                                       [&](const auto& Pair)
                                                       {
-                                                          return Pair.Value.Name == Name;
+                                                          return Pair.Value.Name.ToString() == Name;
                                                       }))
         {
             return Found->Key;

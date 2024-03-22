@@ -1,6 +1,18 @@
 // Snake_Game, all rights reserved.
 
 #include "Framework/SG_GameUserSettings.h"
+#include "Kismet/KismetInternationalizationLibrary.h"
+
+static FString CultureToString(ECulture Culture)
+{
+    switch (Culture)
+    {
+        case ECulture::RU:
+            return "ru-RU";
+        default:
+            return "en";
+    }
+}
 
 USG_GameUserSettings::USG_GameUserSettings()
 {
@@ -19,7 +31,7 @@ void USG_GameUserSettings::SaveSnakeSettings(ESpeedOption SpeedOption, ESizeOpti
     CurrentSizeOption = SizeOptions[SizeOption];
 }
 
-TArray<FString> USG_GameUserSettings::GetSpeedOptionNames() const
+TArray<FText> USG_GameUserSettings::GetSpeedOptionNames() const
 {
     return GetOptionNames(SpeedOptions);
 }
@@ -29,7 +41,7 @@ TOptional<ESpeedOption> USG_GameUserSettings::GetSpeedOptionByName(const FString
     return GetOptionByName(SpeedOptions, Name);
 }
 
-TArray<FString> USG_GameUserSettings::GetSizeOptionNames() const
+TArray<FText> USG_GameUserSettings::GetSizeOptionNames() const
 {
     return GetOptionNames(SizeOptions);
 }
@@ -37,4 +49,9 @@ TArray<FString> USG_GameUserSettings::GetSizeOptionNames() const
 TOptional<ESizeOption> USG_GameUserSettings::GetSizeOptionByName(const FString& Name) const
 {
     return GetOptionByName(SizeOptions, Name);
+}
+
+void USG_GameUserSettings::SetCurrentCulture(ECulture Culture)
+{
+    UKismetInternationalizationLibrary::SetCurrentCulture(CultureToString(Culture), true);
 }
