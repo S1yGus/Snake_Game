@@ -9,7 +9,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogGame, All, All)
 
 using namespace SnakeGame;
 
-Game::Game(const Settings& settings) : c_settings{settings}
+Game::Game(const Settings& settings) : c_settings{settings}, m_currentGameSpeed{settings.speed.initial}
 {
     m_grid = MakeShared<Grid>(settings.gridSize, settings.positionRandomizer);
     check(m_grid.IsValid());
@@ -40,6 +40,7 @@ void Game::update(float deltaSeconds, const Input& input)
     if (foodTaken())
     {
         ++m_score;
+        m_currentGameSpeed = FMath::Max(m_currentGameSpeed - c_settings.speed.boost, c_settings.speed.limit);
         m_snake->increase();
         generateFood();
         dispatchGameEvent(GameEvent::FoodTaken);
@@ -61,7 +62,7 @@ bool Game::updateTime(float deltaSeconds)
 {
     m_gameTime += deltaSeconds;
     m_pastSeconds += deltaSeconds;
-    if (m_pastSeconds >= c_settings.gameSpeed)
+    if (m_pastSeconds >= m_currentGameSpeed)
     {
         m_pastSeconds = 0.0f;
         return true;

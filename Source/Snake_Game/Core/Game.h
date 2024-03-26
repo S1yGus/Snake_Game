@@ -65,8 +65,9 @@ private:
     TSharedPtr<Grid> m_grid;
     TSharedPtr<Snake> m_snake;
     TSharedPtr<Food> m_food;
-    float m_gameTime{0};
-    float m_pastSeconds{0};
+    float m_gameTime{0.0f};
+    float m_pastSeconds{0.0f};
+    float m_currentGameSpeed{0.0f};
     bool m_gameOver{false};
     uint32 m_score{0};
     TArray<GameEventCallback> m_gameEventCallbacks;

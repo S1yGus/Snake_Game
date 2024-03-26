@@ -114,8 +114,9 @@ void FFramework::Define()
                  It("SpeedOptionsShouldBeSaved",
                     [this]()
                     {
-                        const TArray<TestPayload<ESpeedOption, TPair<FString, float>>> Payload{{ESpeedOption::Worm, {"Worm", 0.3f}},    //
-                                                                                               {ESpeedOption::Snake, {"Snake", 0.15f}}};
+                        using namespace SnakeGame;
+                        const TArray<TestPayload<ESpeedOption, TPair<FString, SpeedData>>> Payload{{ESpeedOption::Worm, {"Worm", SpeedData{0.3f, 0.2f, 0.0f}}},    //
+                                                                                                   {ESpeedOption::Snake, {"Snake", SpeedData{0.2f, 0.1f, 0.0f}}}};
                         for (const auto& OnePayload : Payload)
                         {
                             GameUserSettings->SaveSnakeSettings(OnePayload.TestValue, ESizeOption::Size_40x16);

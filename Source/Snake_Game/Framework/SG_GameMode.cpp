@@ -179,14 +179,18 @@ Settings ASG_GameMode::MakeSettings() const
 #if WITH_EDITOR
     if (bOverrideUserSettings)
     {
-        GameSettings.gameSpeed = GameSpeed;
         GameSettings.gridSize = Dim{GridSize.X, GridSize.Y};
+        check(InitialSpeed >= SpeedLimit);
+        GameSettings.speed = {.initial = InitialSpeed,    //
+                              .limit = SpeedLimit,        //
+                              .boost = Boost};
     }
     else
 #endif
     {
-        GameSettings.gameSpeed = GameUserSettings->GetCurrentSpeed();
         GameSettings.gridSize = GameUserSettings->GetCurrentSize();
+        GameSettings.speed = GameUserSettings->GetCurrentSpeed();
+        GameSettings.speed.boost = computeSpeedBoost(GameSettings.speed, GameSettings.gridSize);
     }
     GameSettings.snake = {.defaultSize{SnakeDefaultSize},    //
                           .startPosition{Grid::center({GameSettings.gridSize.width, GameSettings.gridSize.height})}};

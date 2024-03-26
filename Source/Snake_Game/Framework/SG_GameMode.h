@@ -47,8 +47,14 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Settings")
     bool bOverrideUserSettings{false};
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "0.01", ClampMax = "1.0", EditCondition = "bOverrideUserSettings"))
-    float GameSpeed{1.0f};
+    UPROPERTY(EditDefaultsOnly, Category = "Settings|GameSpeed", Meta = (ClampMin = "0.0", EditCondition = "bOverrideUserSettings"))
+    float InitialSpeed{1.0f};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Settings|GameSpeed", Meta = (ClampMin = "0.0", EditCondition = "bOverrideUserSettings"))
+    float SpeedLimit{0.5f};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Settings|GameSpeed", Meta = (ClampMin = "0.0", EditCondition = "bOverrideUserSettings"))
+    float Boost{0.1f};
 
     UPROPERTY(EditDefaultsOnly, Category = "Settings", Meta = (ClampMin = "10", ClampMax = "100", EditCondition = "bOverrideUserSettings"))
     FUintPoint GridSize{10};
