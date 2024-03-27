@@ -7,6 +7,7 @@
 #include "Core/CoreTypes.h"
 #include "Core/Game.h"
 #include "Core/Grid.h"
+#include "Core/Snake.h"
 
 using namespace SnakeGame;
 
@@ -189,6 +190,46 @@ void FIntegration::Define()
 
                         TestTrueExpr(CoreGame->score() == 2);
                         TestTrueExpr(Score == 2);
+                    });
+             });
+
+    Describe("Integration",
+             [this]()
+             {
+                 BeforeEach(
+                     [this]()
+                     {
+                         const TArray<Position> Positions = {{5, 1}, {6, 1}, Position::zero};
+                         GameSettings = {.gridSize{7, 1},
+                                         .speed{.initial = 3.0f, .limit = 2.0f, .boost = 1.0f},
+                                         .snake{.defaultSize{4}, .startPosition{4, 1}},
+                                         .positionRandomizer = MakeShared<StubPositionRandomizer>(Positions)};
+                         CoreGame = MakeUnique<Game>(GameSettings);
+                     });
+                 It("GameSpeedCanBeBoosted",
+                    [this]()
+                    {
+                        const auto GameSpeedAfterBoost = GameSettings.speed.initial - GameSettings.speed.boost;
+                        TestTrueExpr(CoreGame->snake()->head() == Position(4, 1));
+                        CoreGame->update(GameSpeedAfterBoost, {1, 0});    // Cannot move forward until boost
+                        TestTrueExpr(CoreGame->snake()->head() == Position(4, 1));
+                        CoreGame->update(GameSettings.speed.initial, {1, 0});    // Move forward and get a boost
+                        TestTrueExpr(CoreGame->snake()->head() == Position(5, 1));
+                        CoreGame->update(GameSpeedAfterBoost, {1, 0});    // Move forward
+                        TestTrueExpr(CoreGame->snake()->head() == Position(6, 1));
+                    });
+                 It("GameSpeedCannotBeLowerThanLimit",
+                    [this]()
+                    {
+                        TestTrueExpr(CoreGame->snake()->head() == Position(4, 1));
+                        CoreGame->update(GameSettings.speed.initial, {1, 0});    // Move forward and get a boost
+                        TestTrueExpr(CoreGame->snake()->head() == Position(5, 1));
+                        CoreGame->update(GameSettings.speed.initial - GameSettings.speed.boost, {1, 0});    // Move forward and get a boost
+                        TestTrueExpr(CoreGame->snake()->head() == Position(6, 1));
+                        CoreGame->update(GameSettings.speed.initial - GameSettings.speed.boost * 2, {1, 0});    // Cannot move forward, speed is below the limit
+                        TestTrueExpr(CoreGame->snake()->head() == Position(6, 1));
+                        CoreGame->update(GameSettings.speed.limit, {1, 0});    // Move forward
+                        TestTrueExpr(CoreGame->snake()->head() == Position(7, 1));
                     });
              });
 }
