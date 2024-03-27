@@ -76,10 +76,10 @@ public:
     FText GetCurrentSpeedOptionName() const { return CurrentSpeedOption.Name; }
 
     /**
-     * Returns current game speed option value
-     * @return float Current speed option value
+     * Returns current game speed option data
+     * @return SpeedData Current speed option data
      */
-    float GetCurrentSpeed() const { return CurrentSpeedOption.Speed; }
+    SnakeGame::SpeedData GetCurrentSpeed() const { return CurrentSpeedOption.Speed; }
 
     /**
      * Returns the enumeration of game speed option appropriate for the given string option name
@@ -132,10 +132,10 @@ private:
     struct SpeedData
     {
         FText Name;
-        float Speed;
+        SnakeGame::SpeedData Speed;
     };
-    TMap<ESpeedOption, SpeedData> SpeedOptions{{ESpeedOption::Worm, {NSLOCTEXT("Snake_Game_UI", "SpeedWorm_Loc", "Worm"), 0.3f}},    //
-                                               {ESpeedOption::Snake, {NSLOCTEXT("Snake_Game_UI", "SpeedSnake_Loc", "Snake"), 0.15f}}};
+    TMap<ESpeedOption, SpeedData> SpeedOptions{{ESpeedOption::Worm, {NSLOCTEXT("Snake_Game_UI", "SpeedWorm_Loc", "Worm"), {.initial = 0.3f, .limit = 0.2f}}},    //
+                                               {ESpeedOption::Snake, {NSLOCTEXT("Snake_Game_UI", "SpeedSnake_Loc", "Snake"), {.initial = 0.2f, .limit = 0.1f}}}};
     SpeedData CurrentSpeedOption{SpeedOptions[ESpeedOption::Snake]};
 
     struct SizeData
