@@ -5,6 +5,7 @@
 #include "Core/Grid.h"
 #include "Components/LineBatchComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "NiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogGridView, All, All)
 
@@ -21,6 +22,10 @@ ASG_Grid::ASG_Grid()
     GridMesh = CreateDefaultSubobject<UStaticMeshComponent>("GridMesh");
     check(GridMesh);
     GridMesh->SetupAttachment(GetRootComponent());
+
+    WallEffect = CreateDefaultSubobject<UNiagaraComponent>("WallEffect");
+    check(WallEffect);
+    WallEffect->SetupAttachment(GetRootComponent());
 }
 
 void ASG_Grid::Tick(float DeltaTime)
@@ -42,6 +47,23 @@ void ASG_Grid::SetModel(const TSharedPtr<Grid>& Grid, uint32 InCellSize)
     WorldWidth = GridSize.width * CellSize;
     WorldHeight = GridSize.height * CellSize;
 
+    SetupGrid();
+    SetupWallEffect();
+}
+
+void ASG_Grid::UpdateColors(const FSnakeDesignTableRow& DesignSet)
+{
+    if (MaterialInstance)
+    {
+        MaterialInstance->SetVectorParameterValue(BackgroundColorParamName, DesignSet.GridBackgroundColor);
+        MaterialInstance->SetVectorParameterValue(WallsColorParamName, DesignSet.GridWallsColor);
+        MaterialInstance->SetVectorParameterValue(LinesColorParamName, DesignSet.GridLinesColor);
+        WallEffect->SetColorParameter(WallEffectColorParamName, DesignSet.GridWallsColor);
+    }
+}
+
+void ASG_Grid::SetupGrid()
+{
     check(GridMesh->GetStaticMesh());
     const FBox Box = GridMesh->GetStaticMesh()->GetBoundingBox();
     const FVector BoxSize = Box.GetSize();
@@ -50,21 +72,21 @@ void ASG_Grid::SetModel(const TSharedPtr<Grid>& Grid, uint32 InCellSize)
     GridMesh->SetRelativeScale3D(FVector(WorldHeight / BoxSize.X, WorldWidth / BoxSize.Y, 1.0));
     GridMesh->SetRelativeLocation(0.5 * FVector(WorldHeight, WorldWidth, -BoxSize.Z));
 
-    MaterialInstance = GridMesh->CreateAndSetMaterialInstanceDynamic(0);
-    if (MaterialInstance)
+    if (MaterialInstance = GridMesh->CreateAndSetMaterialInstanceDynamic(0))
     {
-        MaterialInstance->SetVectorParameterValue(GirdSizeParameterName, FVector(GridSize.height, GridSize.width, 0.0));
+        MaterialInstance->SetVectorParameterValue(GirdSizeParamName, FVector(GridSize.height, GridSize.width, 0.0));
     }
 }
 
-void ASG_Grid::UpdateColors(const FSnakeDesignTableRow& DesignSet)
+void ASG_Grid::SetupWallEffect()
 {
-    if (MaterialInstance)
-    {
-        MaterialInstance->SetVectorParameterValue(BackgroundColorParameterName, DesignSet.GridBackgroundColor);
-        MaterialInstance->SetVectorParameterValue(WallsColorParameterName, DesignSet.GridWallsColor);
-        MaterialInstance->SetVectorParameterValue(LinesColorParameterName, DesignSet.GridLinesColor);
-    }
+    check(WallEffect->GetAsset());
+    WallEffect->SetRelativeLocation(0.5 * FVector(WorldHeight, WorldWidth, 0.0));
+    WallEffect->SetVectorParameter(WallEffectExternalSizeParamName, FVector(WorldHeight, WorldWidth, 0.0));
+    WallEffect->SetVectorParameter(WallEffectInternalSizeParamName,
+                                   FVector(WorldHeight - CellSize * WallThicknessFactor, WorldWidth - CellSize * WallThicknessFactor, 1.0));
+    WallEffect->SetFloatParameter(WallEffectSpawnRateParamName, GridSize.width * GridSize.height * WallEffectSpawnRateFactor);
+    WallEffect->SetCastShadow(true);
 }
 
 void ASG_Grid::DrawDebugGrid()
