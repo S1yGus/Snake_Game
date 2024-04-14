@@ -8,6 +8,7 @@
 #include "SG_Grid.generated.h"
 
 class UStaticMeshComponent;
+class UNiagaraComponent;
 struct FSnakeDesignTableRow;
 
 namespace SnakeGame
@@ -45,17 +46,38 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Components")
     TObjectPtr<UStaticMeshComponent> GridMesh;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Materials")
-    FName GirdSizeParameterName{"GridSize"};
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    TObjectPtr<UNiagaraComponent> WallEffect;
 
     UPROPERTY(EditDefaultsOnly, Category = "Materials")
-    FName BackgroundColorParameterName{"BackgroundColor"};
+    FName GirdSizeParamName{"GridSize"};
 
     UPROPERTY(EditDefaultsOnly, Category = "Materials")
-    FName WallsColorParameterName{"WallsColor"};
+    FName BackgroundColorParamName{"BackgroundColor"};
 
     UPROPERTY(EditDefaultsOnly, Category = "Materials")
-    FName LinesColorParameterName{"LinesColor"};
+    FName WallsColorParamName{"WallsColor"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "Materials")
+    FName LinesColorParamName{"LinesColor"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "VFX")
+    FName WallEffectColorParamName{"Color"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "VFX")
+    FName WallEffectExternalSizeParamName{"ExternalSize"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "VFX")
+    FName WallEffectInternalSizeParamName{"InternalSize"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "VFX")
+    FName WallEffectSpawnRateParamName{"SpawnRate"};
+
+    UPROPERTY(EditDefaultsOnly, Category = "VFX", Meta = (ClampMin = "0.0"))
+    float WallEffectSpawnRateFactor{2.4f};
+
+    UPROPERTY(EditDefaultsOnly, Category = "VFX", Meta = (ClampMin = "0.0"))
+    float WallThicknessFactor{1.6f};
 
 private:
 #pragma region With metadata
@@ -68,5 +90,7 @@ private:
     uint32 WorldWidth;
     uint32 WorldHeight;
 
+    FORCEINLINE void SetupGrid();
+    FORCEINLINE void SetupWallEffect();
     void DrawDebugGrid();
 };
