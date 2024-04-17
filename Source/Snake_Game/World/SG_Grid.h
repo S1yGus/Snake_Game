@@ -77,7 +77,7 @@ protected:
     float WallEffectSpawnRateFactor{2.4f};
 
     UPROPERTY(EditDefaultsOnly, Category = "VFX", Meta = (ClampMin = "0.0"))
-    float WallThicknessFactor{1.6f};
+    float WallThicknessFactor{1.575f};
 
 private:
 #pragma region With metadata
