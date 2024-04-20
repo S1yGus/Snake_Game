@@ -17,6 +17,8 @@ void USG_MenuWidget::NativeOnInitialized()
     StartGameButton->OnClicked.AddDynamic(this, &ThisClass::OnStartGame);
     check(QuitGameButton);
     QuitGameButton->OnClicked.AddDynamic(this, &ThisClass::OnQuitGame);
+    check(ToggleScreenModeButton);
+    ToggleScreenModeButton->OnClicked.AddDynamic(this, &ThisClass::OnToggleScreenMode);
 
     if (auto* GameUserSettings = USG_GameUserSettings::Get())
     {
@@ -34,6 +36,24 @@ void USG_MenuWidget::OnStartGame()
 void USG_MenuWidget::OnQuitGame()
 {
     UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Type::Quit, false);
+}
+
+void USG_MenuWidget::OnToggleScreenMode()
+{
+    if (auto* GameUserSettings = USG_GameUserSettings::Get())
+    {
+        const EWindowMode::Type CurrentMode = GameUserSettings->GetFullscreenMode();
+        if (TArray<FIntPoint> Resolutions; CurrentMode != EWindowMode::Windowed)
+        {
+            UKismetSystemLibrary::GetConvenientWindowedResolutions(Resolutions);
+            if (!Resolutions.IsEmpty())
+            {
+                GameUserSettings->SetScreenResolution(Resolutions[0]);
+            }
+        }
+        GameUserSettings->SetFullscreenMode(CurrentMode == EWindowMode::Type::Windowed ? EWindowMode::Type::WindowedFullscreen : EWindowMode::Type::Windowed);
+        GameUserSettings->ApplyResolutionSettings(false);
+    }
 }
 
 void USG_MenuWidget::OnComboBoxSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)

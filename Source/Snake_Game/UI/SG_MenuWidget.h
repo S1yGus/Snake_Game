@@ -25,6 +25,9 @@ protected:
     TObjectPtr<UButton> QuitGameButton;
 
     UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UButton> ToggleScreenModeButton;
+
+    UPROPERTY(meta = (BindWidget))
     TObjectPtr<UComboBoxString> SpeedComboBox;
 
     UPROPERTY(meta = (BindWidget))
@@ -48,6 +51,9 @@ private:
 
     UFUNCTION()
     void OnQuitGame();
+
+    UFUNCTION()
+    void OnToggleScreenMode();
 
     UFUNCTION()
     void OnComboBoxSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
