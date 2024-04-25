@@ -132,7 +132,7 @@ struct SNAKE_GAME_API SpeedData
  * possible scores
  * @return float The computed value of the game speed boost
  */
-UE_NODISCARD FORCEINLINE float computeSpeedBoost(const SpeedData& speed, const Dim& gridSize, float sizeFactor = 0.25f)
+[[nodiscard]] FORCEINLINE float computeSpeedBoost(const SpeedData& speed, const Dim& gridSize, float sizeFactor = 0.25f)
 {
     check(sizeFactor <= 1.0f);
     const float sizeAmount = gridSize.width * gridSize.height * sizeFactor;
