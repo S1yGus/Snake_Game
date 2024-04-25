@@ -5,7 +5,8 @@ DerivedDataCache/
 Intermediate/
 Saved/
 Binaries/
-Build/
+Artifact/
 Documentation/
 HoloLensEngine.ini
-devops_data/
+**/config.bat
+**/*.log
