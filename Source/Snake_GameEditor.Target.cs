@@ -12,7 +12,7 @@ public class Snake_GameEditorTarget : TargetRules
     public Snake_GameEditorTarget(TargetInfo Target) : base(Target)
     {
         Type = TargetType.Editor;
-        DefaultBuildSettings = BuildSettingsVersion.V4;
+        DefaultBuildSettings = BuildSettingsVersion.V5;
         IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 
         ExtraModuleNames.AddRange(new string[] { "Snake_Game", "Snake_Game_Tests" });
